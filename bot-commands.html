@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bot 指令手册</title>
+<style>
+  :root{
+    --ink:#222b3f;
+    --ink-2:#3c4761;
+    --ink-3:#69748e;
+    --ink-4:#8f99b0;
+    --accent:#4f74c4;
+    --accent-2:#c76fa8;
+    --accent-3:#3f9b96;
+    --warn:#c98a2e;
+    --glass:rgba(255,255,255,.52);
+    --glass-strong:rgba(255,255,255,.68);
+    --glass-soft:rgba(255,255,255,.34);
+    --line:rgba(255,255,255,.72);
+    --line-soft:rgba(120,140,180,.20);
+    --shadow:0 18px 50px -22px rgba(45,65,110,.45), 0 2px 8px -2px rgba(45,65,110,.10);
+    --radius:20px;
+    --mono:"Cascadia Code","JetBrains Mono","Fira Code",Consolas,Menlo,monospace;
+    --sans:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    line-height:1.65;
+    min-height:100vh;
+    padding:0 20px 90px;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+    background:#cfd9ea;
+    overflow-x:hidden;
+  }
+
+  /* ================= 背景层 ================= */
+  .bg{position:fixed;inset:0;z-index:-3;overflow:hidden;pointer-events:none}
+  .bg i{
+    position:absolute;inset:-8%;
+    background-size:cover;background-position:center 35%;
+    display:block;
+  }
+  /* 远层：大半径柔化，负责整体氛围 */
+  .bg .b1{
+    background-image:url("bg-soft.jpg");
+    filter:blur(30px) saturate(118%) brightness(1.06);
+    transform:scale(1.12);
+  }
+  /* 中层：轻度虚化，透出一点构图与轮廓 */
+  .bg .b2{
+    background-image:url("bg-far.jpg");
+    filter:blur(9px) saturate(115%);
+    opacity:.82;
+    transform:scale(1.08);
+    mix-blend-mode:normal;
+  }
+  /* 近层：原图极淡，只留光斑与色块 */
+  .bg .b3{
+    background-image:url("bg-far.jpg");
+    filter:blur(3px) saturate(108%) contrast(1.04);
+    opacity:.34;
+    transform:scale(1.05);
+    mix-blend-mode:soft-light;
+  }
+  /* 提亮 + 白纱，保证文字对比度 */
+  .bg .veil{
+    inset:0;transform:none;
+    background:
+      radial-gradient(115% 85% at 50% -6%, rgba(255,255,255,.74) 0%, rgba(255,255,255,.40) 36%, rgba(255,255,255,.16) 68%, rgba(255,255,255,.44) 100%),
+      linear-gradient(180deg, rgba(255,255,255,.42) 0%, rgba(246,249,255,.20) 42%, rgba(236,243,253,.55) 100%);
+  }
+  /* 细腻噪点，消除色带、增加质感 */
+  .bg .grain{
+    inset:0;transform:none;opacity:.30;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+  }
+
+  .wrap{max-width:1020px;margin:0 auto;position:relative;z-index:1}
+
+  /* ================= 头部 ================= */
+  header{padding:78px 0 30px;text-align:center}
+  .logo{
+    display:inline-flex;align-items:center;gap:9px;
+    font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;font-weight:600;
+    color:var(--accent);
+    background:var(--glass);
+    border:1px solid var(--line);
+    backdrop-filter:blur(18px) saturate(160%);
+    -webkit-backdrop-filter:blur(18px) saturate(160%);
+    padding:8px 18px;border-radius:999px;margin-bottom:26px;
+    box-shadow:0 8px 24px -14px rgba(45,65,110,.5);
+  }
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(79,116,196,.14);animation:pulse 2.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.75)}}
+
+  h1{
+    font-size:clamp(32px,5.4vw,52px);font-weight:800;letter-spacing:-.025em;line-height:1.15;
+    background:linear-gradient(104deg,#1f2a44 6%,#4f74c4 44%,#8e7cc4 68%,#c76fa8 96%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{color:var(--ink-2);margin-top:16px;font-size:15px;font-weight:400}
+  .meta{margin-top:24px;display:flex;gap:9px;justify-content:center;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2)}
+  .meta span{
+    background:var(--glass);border:1px solid var(--line);
+    backdrop-filter:blur(14px) saturate(150%);
+    -webkit-backdrop-filter:blur(14px) saturate(150%);
+    padding:6px 14px;border-radius:10px;
+    box-shadow:0 6px 18px -14px rgba(45,65,110,.6);
+  }
+  .meta b{color:var(--accent);font-weight:700}
+
+  /* ================= 搜索 ================= */
+  .search-wrap{position:sticky;top:0;z-index:30;padding:14px 0 12px}
+  .search-wrap::before{
+    content:"";position:absolute;inset:-14px -24px 0;z-index:-1;
+    background:linear-gradient(180deg,rgba(240,245,253,.92) 0%,rgba(240,245,253,.78) 62%,rgba(240,245,253,0) 100%);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    -webkit-mask-image:linear-gradient(180deg,#000 72%,transparent);
+    mask-image:linear-gradient(180deg,#000 72%,transparent);
+  }
+  .search-box{position:relative}
+  .search-box svg{position:absolute;left:18px;top:50%;transform:translateY(-50%);width:17px;height:17px;stroke:var(--ink-3);fill:none;stroke-width:2;stroke-linecap:round}
+  #search{
+    width:100%;padding:15px 18px 15px 48px;font-size:15px;color:var(--ink);
+    background:var(--glass-strong);
+    border:1px solid var(--line);border-radius:16px;
+    backdrop-filter:blur(24px) saturate(170%);
+    -webkit-backdrop-filter:blur(24px) saturate(170%);
+    outline:none;font-family:inherit;
+    transition:border-color .2s,box-shadow .2s,background .2s;
+    box-shadow:0 10px 34px -20px rgba(45,65,110,.7);
+  }
+  #search::placeholder{color:var(--ink-4)}
+  #search:focus{border-color:rgba(79,116,196,.55);background:rgba(255,255,255,.86);box-shadow:0 0 0 4px rgba(79,116,196,.12),0 12px 34px -20px rgba(45,65,110,.8)}
+  .hint-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:var(--ink-3);min-height:18px;padding:0 4px}
+  kbd{font-family:var(--mono);font-size:10.5px;background:rgba(255,255,255,.8);border:1px solid var(--line-soft);border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--ink-2)}
+
+  /* ================= 布局 ================= */
+  .layout{display:grid;grid-template-columns:1fr;gap:26px;margin-top:12px}
+  nav.toc{display:none}
+  @media(min-width:1000px){
+    .layout{grid-template-columns:186px 1fr;align-items:start}
+    nav.toc{
+      display:block;position:sticky;top:132px;font-size:13.5px;
+      background:var(--glass-soft);border:1px solid var(--line-soft);
+      backdrop-filter:blur(20px) saturate(150%);
+      -webkit-backdrop-filter:blur(20px) saturate(150%);
+      border-radius:16px;padding:16px 12px;
+      box-shadow:0 14px 40px -28px rgba(45,65,110,.8);
+    }
+    nav.toc p{color:var(--ink-4);font-size:10px;letter-spacing:.18em;text-transform:uppercase;margin:0 0 10px 8px;font-weight:700}
+    nav.toc a{display:block;color:var(--ink-2);text-decoration:none;padding:7px 10px;border-radius:9px;transition:.18s;border-left:2px solid transparent}
+    nav.toc a:hover{color:var(--accent);background:rgba(255,255,255,.55);border-left-color:var(--accent)}
+  }
+
+  /* ================= 卡片 ================= */
+  .card{
+    background:var(--glass);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px 26px 24px;margin-bottom:16px;
+    position:relative;overflow:hidden;
+    backdrop-filter:blur(26px) saturate(165%);
+    -webkit-backdrop-filter:blur(26px) saturate(165%);
+    box-shadow:var(--shadow);
+    transition:transform .22s cubic-bezier(.2,.7,.3,1),box-shadow .22s,background .22s;
+    scroll-margin-top:132px;
+  }
+  .card::before{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,0) 42%);
+    opacity:.9;pointer-events:none;
+  }
+  .card::after{
+    content:"";position:absolute;left:0;top:22px;bottom:22px;width:2.5px;border-radius:3px;
+    background:linear-gradient(180deg,var(--accent),var(--accent-2));
+    opacity:0;transition:opacity .25s;
+  }
+  .card:hover{transform:translateY(-3px);background:rgba(255,255,255,.66);box-shadow:0 26px 60px -26px rgba(45,65,110,.55),0 2px 10px -4px rgba(45,65,110,.14)}
+  .card:hover::after{opacity:1}
+  .card.hidden{display:none}
+
+  .card-head{display:flex;flex-wrap:wrap;align-items:center;gap:11px;margin-bottom:11px;position:relative}
+  .cmd{
+    font-family:var(--mono);font-size:17.5px;font-weight:600;color:var(--accent);
+    background:rgba(255,255,255,.72);
+    border:1px solid rgba(79,116,196,.28);
+    padding:6px 14px;border-radius:11px;letter-spacing:.01em;cursor:pointer;
+    transition:background .18s,border-color .18s,transform .12s,box-shadow .18s;
+    box-shadow:0 4px 14px -8px rgba(79,116,196,.8);
+  }
+  .cmd:hover{background:#fff;border-color:rgba(79,116,196,.6);box-shadow:0 8px 20px -10px rgba(79,116,196,.9)}
+  .cmd:active{transform:scale(.975)}
+  .cmd .ph{color:var(--ink-3);font-weight:500}
+
+  .tag{
+    font-size:11px;padding:3px 10px;border-radius:999px;font-weight:600;
+    border:1px solid var(--line-soft);color:var(--ink-3);background:rgba(255,255,255,.55);
+    letter-spacing:.04em;white-space:nowrap;
+  }
+  .tag.no-prefix{border-color:rgba(201,138,46,.38);color:var(--warn);background:rgba(255,246,229,.72)}
+  .tag.voice{border-color:rgba(79,116,196,.32);color:var(--accent);background:rgba(235,241,255,.78)}
+  .tag.game{border-color:rgba(199,111,168,.32);color:var(--accent-2);background:rgba(255,238,248,.75)}
+  .tag.sys{border-color:rgba(63,155,150,.32);color:var(--accent-3);background:rgba(232,249,247,.75)}
+
+  .desc{color:var(--ink-2);font-size:14.5px;position:relative}
+  .desc b{color:var(--accent);font-weight:650}
+
+  /* 子参数 */
+  .subs{margin-top:16px;display:grid;gap:8px;position:relative}
+  .sub-item{
+    display:grid;grid-template-columns:minmax(0,1fr);gap:3px;
+    background:rgba(255,255,255,.42);
+    border:1px solid var(--line-soft);
+    border-radius:12px;padding:12px 15px;
+  }
+  @media(min-width:620px){
+    .sub-item{grid-template-columns:auto 1fr;gap:18px;align-items:baseline}
+  }
+  .sub-key{font-family:var(--mono);font-size:13.5px;color:var(--accent);white-space:nowrap;font-weight:600}
+  .sub-key .ph{color:var(--ink-3);font-weight:400}
+  .sub-val{font-size:13.5px;color:var(--ink-2)}
+  .sub-val b{color:var(--accent-2);font-weight:650}
+
+  /* 示例 */
+  .examples{margin-top:16px;position:relative}
+  .examples-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-4);margin-bottom:9px;font-weight:700}
+  .ex{
+    display:block;font-family:var(--mono);font-size:12.8px;color:var(--ink-2);
+    background:rgba(255,255,255,.5);
+    border:1px solid var(--line-soft);border-left:2.5px solid rgba(79,116,196,.35);
+    padding:9px 13px;border-radius:0 10px 10px 0;margin-bottom:6px;
+    white-space:pre-wrap;word-break:break-word;cursor:pointer;
+    transition:.18s;
+  }
+  .ex:hover{background:rgba(255,255,255,.82);border-left-color:var(--accent);color:var(--ink);transform:translateX(2px)}
+
+  /* ================= 区块标题 ================= */
+  .section-title{
+    font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:700;
+    margin:44px 0 15px;display:flex;align-items:center;gap:14px;
+  }
+  .section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(120,140,180,.35),transparent)}
+
+  /* ================= 表格 ================= */
+  .table-scroll{
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    border-radius:16px;border:1px solid var(--line);
+    background:var(--glass);
+    backdrop-filter:blur(24px) saturate(160%);
+    -webkit-backdrop-filter:blur(24px) saturate(160%);
+    box-shadow:var(--shadow);
+  }
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:13px 18px;border-bottom:1px solid rgba(120,140,180,.16)}
+  th{background:rgba(255,255,255,.42);color:var(--ink-3);font-weight:700;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  tbody tr{transition:background .16s}
+  tbody tr:hover{background:rgba(255,255,255,.45)}
+  td code{font-family:var(--mono);font-size:12.8px;color:var(--accent);background:rgba(255,255,255,.7);border:1px solid rgba(79,116,196,.18);padding:2px 8px;border-radius:6px;white-space:nowrap}
+  td:last-child{color:var(--ink-2)}
+
+  /* ================= 说明卡 ================= */
+  .notes{display:grid;gap:10px}
+  @media(min-width:640px){.notes{grid-template-columns:1fr 1fr}}
+  .note{
+    background:var(--glass-soft);
+    border:1px solid var(--line-soft);border-radius:14px;padding:17px 19px;
+    font-size:13.5px;color:var(--ink-2);
+    backdrop-filter:blur(18px) saturate(150%);
+    -webkit-backdrop-filter:blur(18px) saturate(150%);
+  }
+  .note strong{display:block;color:var(--ink);font-size:12.5px;margin-bottom:6px;letter-spacing:.03em;font-weight:700}
+  .note code{font-family:var(--mono);color:var(--accent);font-size:12.5px;background:rgba(255,255,255,.6);padding:1px 6px;border-radius:5px}
+
+  /* ================= 联系 ================= */
+  .connect{display:grid;gap:14px}
+  @media(min-width:700px){.connect{grid-template-columns:1fr 1fr}}
+  .connect-card{
+    position:relative;overflow:hidden;
+    background:var(--glass-strong);
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 24px 22px;
+    backdrop-filter:blur(28px) saturate(170%);
+    -webkit-backdrop-filter:blur(28px) saturate(170%);
+    box-shadow:var(--shadow);
+    transition:transform .22s,box-shadow .22s;
+    text-decoration:none;color:inherit;display:block;
+  }
+  .connect-card:hover{transform:translateY(-3px);box-shadow:0 26px 60px -26px rgba(45,65,110,.55)}
+  .connect-card .k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-4);font-weight:700}
+  .connect-card .v{
+    font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink);
+    margin:9px 0 6px;letter-spacing:.02em;word-break:break-all;line-height:1.3;
+  }
+  .connect-card .v.link{color:var(--accent)}
+  .connect-card .t{font-size:13px;color:var(--ink-3)}
+  .connect-card .go{
+    position:absolute;right:22px;top:22px;width:32px;height:32px;border-radius:50%;
+    background:rgba(255,255,255,.7);border:1px solid var(--line-soft);
+    display:grid;place-items:center;color:var(--accent);font-size:15px;
+    transition:.2s;
+  }
+  .connect-card:hover .go{background:var(--accent);color:#fff;border-color:transparent}
+  .copy-mini{
+    display:inline-flex;align-items:center;gap:6px;
+    margin-top:12px;font-size:11.5px;font-weight:600;color:var(--accent);
+    background:rgba(255,255,255,.75);border:1px solid rgba(79,116,196,.24);
+    padding:5px 12px;border-radius:8px;cursor:pointer;font-family:var(--sans);
+    transition:.18s;
+  }
+  .copy-mini:hover{background:#fff;border-color:rgba(79,116,196,.5)}
+
+  /* ================= 页脚 ================= */
+  footer{
+    margin-top:52px;padding-top:26px;
+    border-top:1px solid rgba(120,140,180,.24);
+    text-align:center;font-size:12.5px;color:var(--ink-3);
+  }
+  footer .k{color:var(--ink-2);font-family:var(--mono);font-size:12px}
+
+  /* ================= Toast ================= */
+  #toast{
+    position:fixed;left:50%;bottom:36px;transform:translate(-50%,24px);
+    background:rgba(34,43,63,.94);color:#fff;font-size:13px;font-weight:600;
+    padding:11px 22px;border-radius:999px;opacity:0;pointer-events:none;
+    transition:opacity .24s,transform .24s;z-index:99;
+    box-shadow:0 16px 40px -14px rgba(34,43,63,.7);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    max-width:88vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+
+  #empty{display:none;text-align:center;padding:56px 20px;color:var(--ink-3);border:1px dashed rgba(120,140,180,.4);border-radius:var(--radius);background:var(--glass-soft);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  #empty.visible{display:block}
+  #empty .big{font-size:26px;margin-bottom:8px}
+
+  ::selection{background:rgba(79,116,196,.22);color:var(--ink)}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <i class="b1"></i>
+  <i class="b2"></i>
+  <i class="b3"></i>
+  <i class="veil"></i>
+  <i class="grain"></i>
+</div>
+
+<div class="wrap">
+
+  <header>
+    <div class="logo"><span class="dot"></span> Command Reference</div>
+    <h1>Bot 指令手册</h1>
+    <p class="sub">全部可用指令一览 · 点击任意指令即可复制</p>
+    <div class="meta">
+      <span>共 <b>6</b> 条指令</span>
+      <span>前缀 <b>!</b></span>
+      <span>群号 <b>1067790453</b></span>
+      <span>站点 <b>azure712.space</b></span>
+    </div>
+  </header>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+      <input id="search" type="text" placeholder="搜索指令、功能或参数…（按 / 聚焦）" autocomplete="off">
+    </div>
+    <div class="hint-row">
+      <span id="count">显示 6 / 6 条指令</span>
+      <span><kbd>Esc</kbd> 清空搜索</span>
+    </div>
+  </div>
+
+  <div class="layout">
+    <nav class="toc">
+      <p>目录</p>
+      <a href="#lyrics">接歌词</a>
+      <a href="#like">赞我</a>
+      <a href="#song">点歌</a>
+      <a href="#chorus">副歌</a>
+      <a href="#favor">好感度</a>
+      <a href="#help">帮助</a>
+      <a href="#cheatsheet">速查表</a>
+      <a href="#connect">联系</a>
+    </nav>
+
+    <main>
+
+      <!-- 1 接歌词 -->
+      <article class="card" id="lyrics" data-key="!接歌词 歌词 歌曲 歌名 search from 接龙 猜歌 退出 结束 quit">
+        <div class="card-head">
+          <span class="cmd" data-copy="!接歌词">!接歌词</span>
+          <span class="tag game">互动游戏</span>
+        </div>
+        <p class="desc">歌词接龙游戏指令组。<b>不带参数</b>时随机开始；也可以用下面的参数指定歌曲与起始句。游戏进行中可随时退出。</p>
+        <div class="subs">
+          <div class="sub-item">
+            <div class="sub-key">search <span class="ph">&lt;歌名&gt;</span></div>
+            <div class="sub-val">搜索歌曲并从<b>第一句</b>开始接</div>
+          </div>
+          <div class="sub-item">
+            <div class="sub-key">from <span class="ph">&lt;歌名&gt;</span> <span class="ph">&lt;歌词&gt;</span></div>
+            <div class="sub-val">从<b>指定歌词</b>开始游戏</div>
+          </div>
+          <div class="sub-item">
+            <div class="sub-key">退出接歌 / 结束接歌 / quit</div>
+            <div class="sub-val">结束当前歌词接龙，三种写法任选其一</div>
+          </div>
+        </div>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="!接歌词 search 晴天">!接歌词 search 晴天</span>
+          <span class="ex" data-copy="!接歌词 from I LOVE U 我爱你">!接歌词 from I LOVE U 我爱你</span>
+          <span class="ex" data-copy="!接歌词 退出接歌">!接歌词 退出接歌</span>
+        </div>
+      </article>
+
+      <!-- 2 赞我 -->
+      <article class="card" id="like" data-key="赞我 点赞 无前缀 喜欢 拇指">
+        <div class="card-head">
+          <span class="cmd" data-copy="赞我">赞我</span>
+          <span class="tag no-prefix">无前缀</span>
+          <span class="tag">互动</span>
+        </div>
+        <p class="desc">让 bot 给你点赞。<b>不需要 <span style="font-family:var(--mono)">!</span> 前缀</b>，直接发送这两个字即可。</p>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="赞我">赞我</span>
+        </div>
+      </article>
+
+      <!-- 3 点歌 -->
+      <article class="card" id="song" data-key="!点歌 点歌 歌名 语音 转换 发送 音乐 完整">
+        <div class="card-head">
+          <span class="cmd" data-copy="!点歌 ">!点歌 <span class="ph">&lt;歌名&gt;</span></span>
+          <span class="tag voice">语音</span>
+        </div>
+        <p class="desc">将指定歌曲转换为<b>语音</b>并发送。</p>
+        <div class="subs">
+          <div class="sub-item">
+            <div class="sub-key">&lt;歌名&gt;</div>
+            <div class="sub-val">要点的歌曲名称，建议写全名以便准确匹配</div>
+          </div>
+        </div>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="!点歌 起风了">!点歌 起风了</span>
+        </div>
+      </article>
+
+      <!-- 4 副歌 -->
+      <article class="card" id="chorus" data-key="!副歌 副歌 高潮 片段 歌名 语音 播放 部分">
+        <div class="card-head">
+          <span class="cmd" data-copy="!副歌 ">!副歌 <span class="ph">&lt;歌名&gt;</span></span>
+          <span class="tag voice">语音</span>
+          <span class="tag">片段</span>
+        </div>
+        <p class="desc">播放一首歌的<b>副歌部分</b>，只截取高潮段落，比整首更快出效果。</p>
+        <div class="subs">
+          <div class="sub-item">
+            <div class="sub-key">&lt;歌名&gt;</div>
+            <div class="sub-val">要播放副歌的歌曲名称，建议写全名以便准确匹配</div>
+          </div>
+        </div>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="!副歌 起风了">!副歌 起风了</span>
+          <span class="ex" data-copy="!副歌 晴天">!副歌 晴天</span>
+        </div>
+      </article>
+
+      <!-- 5 好感度 -->
+      <article class="card" id="favor" data-key="!查询好感度 好感度 数值 查询 状态 好感">
+        <div class="card-head">
+          <span class="cmd" data-copy="!查询好感度">!查询好感度</span>
+          <span class="tag game">互动</span>
+        </div>
+        <p class="desc">查询当前的<b>好感度数值</b>。</p>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="!查询好感度">!查询好感度</span>
+        </div>
+      </article>
+
+      <!-- 6 help -->
+      <article class="card" id="help" data-key="!help 帮助 帮助页 指令 说明 菜单">
+        <div class="card-head">
+          <span class="cmd" data-copy="!help">!help</span>
+          <span class="tag sys">系统</span>
+        </div>
+        <p class="desc">显示 bot 自带的<b>帮助页</b>。</p>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="!help">!help</span>
+        </div>
+      </article>
+
+      <div id="empty">
+        <div class="big">🔍</div>
+        <div>没有匹配的指令，换个关键词试试</div>
+      </div>
+
+      <!-- 速查表 -->
+      <div class="section-title" id="cheatsheet">命令速查表</div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th style="width:42%">指令</th><th>功能</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>!接歌词</code></td><td>随机开始歌词接龙</td></tr>
+            <tr><td><code>!接歌词 search &lt;歌名&gt;</code></td><td>搜索歌曲并从第一句开始</td></tr>
+            <tr><td><code>!接歌词 from &lt;歌名&gt; &lt;歌词&gt;</code></td><td>从指定歌词开始游戏</td></tr>
+            <tr><td><code>退出接歌 / 结束接歌 / quit</code></td><td>结束当前歌词接龙</td></tr>
+            <tr><td><code>赞我</code></td><td>让 bot 给你点赞（无前缀）</td></tr>
+            <tr><td><code>!点歌 &lt;歌名&gt;</code></td><td>把整首歌曲转成语音发送</td></tr>
+            <tr><td><code>!副歌 &lt;歌名&gt;</code></td><td>播放歌曲的副歌部分</td></tr>
+            <tr><td><code>!查询好感度</code></td><td>查看当前好感度数值</td></tr>
+            <tr><td><code>!help</code></td><td>显示帮助页</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 说明 -->
+      <div class="section-title">使用说明</div>
+      <div class="notes">
+        <div class="note">
+          <strong>关于前缀</strong>
+          绝大多数指令需要以 <code>!</code> 开头。唯一例外是 <code>赞我</code>，<b>不带任何前缀</b>直接发送。
+        </div>
+        <div class="note">
+          <strong>关于尖括号</strong>
+          <code>&lt;歌名&gt;</code>、<code>&lt;歌词&gt;</code> 里的内容需要替换成你实际输入的内容，尖括号本身不用发送。
+        </div>
+        <div class="note">
+          <strong>点歌 与 副歌 的区别</strong>
+          <code>!点歌</code> 发送整首；<code>!副歌</code> 只发送副歌片段，想快速听高潮就用副歌。
+        </div>
+        <div class="note">
+          <strong>关于参数顺序</strong>
+          <code>from</code> 后面先写歌名、再写歌词，顺序不能颠倒；歌名与歌词之间用空格分隔。
+        </div>
+        <div class="note">
+          <strong>中途退出接歌</strong>
+          发送 <code>退出接歌</code>、<code>结束接歌</code> 或 <code>quit</code> 均可结束当前游戏。
+        </div>
+      </div>
+
+      <!-- 联系 -->
+      <div class="section-title" id="connect">服务群 &amp; 网站</div>
+      <div class="connect">
+        <div class="connect-card">
+          <div class="k">QQ 服务群</div>
+          <div class="v" id="qq-num">1067790453</div>
+          <div class="t">问题反馈 · 使用交流 · 功能建议</div>
+          <button class="copy-mini" data-copy="1067790453" type="button">复制群号</button>
+        </div>
+        <a class="connect-card" href="https://azure712.space" target="_blank" rel="noopener noreferrer">
+          <div class="go">↗</div>
+          <div class="k">官方网站</div>
+          <div class="v link">azure712.space</div>
+          <div class="t">点击访问 · 文档与更新公告</div>
+        </a>
+      </div>
+
+      <footer>
+        <p><span class="k">Bot 指令手册</span> · 点击任意指令或示例即可复制</p>
+        <p style="margin-top:7px">服务群 <span class="k">1067790453</span> &nbsp;·&nbsp; 网站 <span class="k">azure712.space</span></p>
+        <p style="margin-top:7px">发送 <span class="k">!help</span> 可在聊天中直接查看帮助</p>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<div id="toast">已复制</div>
+
+<script>
+(function () {
+  var searchEl = document.getElementById('search');
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
+  var countEl = document.getElementById('count');
+  var emptyEl = document.getElementById('empty');
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+
+  function filter() {
+    var q = searchEl.value.trim().toLowerCase();
+    var shown = 0;
+    cards.forEach(function (card) {
+      var hay = (card.getAttribute('data-key') || '') + ' ' + card.textContent;
+      var hit = !q || hay.toLowerCase().indexOf(q) !== -1;
+      card.classList.toggle('hidden', !hit);
+      if (hit) shown++;
+    });
+    countEl.textContent = '显示 ' + shown + ' / ' + cards.length + ' 条指令';
+    emptyEl.classList.toggle('visible', shown === 0);
+  }
+
+  searchEl.addEventListener('input', filter);
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (document.activeElement && document.activeElement.tagName) || '';
+    var typing = tag === 'INPUT' || tag === 'TEXTAREA';
+    if (e.key === '/' && !typing) {
+      e.preventDefault();
+      searchEl.focus();
+    } else if (e.key === 'Escape') {
+      searchEl.value = '';
+      filter();
+      searchEl.blur();
+    }
+  });
+
+  function showToast(msg) {
+    toast.textContent = msg || '已复制';
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 1500);
+  }
+
+  function copy(text) {
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (err) {}
+      document.body.removeChild(ta);
+      showToast('已复制：' + text);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        showToast('已复制：' + text);
+      }).catch(fallback);
+    } else {
+      fallback();
+    }
+  }
+
+  document.querySelectorAll('[data-copy]').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      copy(el.getAttribute('data-copy'));
+    });
+  });
+
+  filter();
+})();
+</script>
+</body>
+</html>
