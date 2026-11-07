@@ -5,884 +5,912 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bot 指令手册</title>
 <style>
-  :root{
-    --ink:#222b3f;
-    --ink-2:#3c4761;
-    --ink-3:#69748e;
-    --ink-4:#8f99b0;
-    --accent:#4f74c4;
-    --accent-2:#c76fa8;
-    --accent-3:#3f9b96;
-    --warn:#c98a2e;
-    --glass:rgba(255,255,255,.52);
-    --glass-strong:rgba(255,255,255,.68);
-    --glass-soft:rgba(255,255,255,.34);
-    --line:rgba(255,255,255,.72);
-    --line-soft:rgba(120,140,180,.20);
-    --shadow:0 18px 50px -22px rgba(45,65,110,.45), 0 2px 8px -2px rgba(45,65,110,.10);
-    --radius:20px;
-    --mono:"Cascadia Code","JetBrains Mono","Fira Code",Consolas,Menlo,monospace;
-    --sans:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{
-    font-family:var(--sans);
-    color:var(--ink);
-    line-height:1.65;
-    min-height:100vh;
-    padding:0 20px 90px;
-    -webkit-font-smoothing:antialiased;
-    position:relative;
-    background:#cfd9ea;
-    overflow-x:hidden;
-  }
+:root{
+  --ink:#1b2334;
+  --ink-2:#3b4661;
+  --ink-3:#6b7690;
+  --ink-4:#919cb1;
+  --accent:#3f6bc0;
+  --accent-2:#b95f9b;
+  --accent-3:#2f8f8a;
+  --warn:#a9731c;
+  --mono:"Cascadia Code","JetBrains Mono","Fira Code",Consolas,Menlo,monospace;
+  --sans:"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  --hair:rgba(90,110,150,.20);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background:#cdd8ea;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  line-height:1.6;
+}
 
-  /* ================= 背景层 ================= */
-  .bg{position:fixed;inset:0;z-index:-3;overflow:hidden;pointer-events:none}
-  .bg i{
-    position:absolute;inset:-8%;
-    background-size:cover;background-position:center 35%;
-    display:block;
-  }
-  /* 远层：大半径柔化，负责整体氛围 */
-  .bg .b1{
-    background-image:url("bg-soft.jpg");
-    filter:blur(30px) saturate(118%) brightness(1.06);
-    transform:scale(1.12);
-  }
-  /* 中层：轻度虚化，透出一点构图与轮廓 */
-  .bg .b2{
-    background-image:url("bg-far.jpg");
-    filter:blur(9px) saturate(115%);
-    opacity:.82;
-    transform:scale(1.08);
-    mix-blend-mode:normal;
-  }
-  /* 近层：原图极淡，只留光斑与色块 */
-  .bg .b3{
-    background-image:url("bg-far.jpg");
-    filter:blur(3px) saturate(108%) contrast(1.04);
-    opacity:.34;
-    transform:scale(1.05);
-    mix-blend-mode:soft-light;
-  }
-  /* 提亮 + 白纱，保证文字对比度 */
-  .bg .veil{
-    inset:0;transform:none;
-    background:
-      radial-gradient(115% 85% at 50% -6%, rgba(255,255,255,.74) 0%, rgba(255,255,255,.40) 36%, rgba(255,255,255,.16) 68%, rgba(255,255,255,.44) 100%),
-      linear-gradient(180deg, rgba(255,255,255,.42) 0%, rgba(246,249,255,.20) 42%, rgba(236,243,253,.55) 100%);
-  }
-  /* 细腻噪点，消除色带、增加质感 */
-  .bg .grain{
-    inset:0;transform:none;opacity:.30;mix-blend-mode:multiply;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
-  }
+/* ================= 背景 ================= */
+#root{position:fixed;inset:0}
+body{
+  background-image:url("bg-sharp.jpg");
+  background-size:cover;
+  background-position:center 42%;
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+  background-color:#c9d5e8;
+}
 
-  .wrap{max-width:1020px;margin:0 auto;position:relative;z-index:1}
+/* ================= 玻璃窗口（视觉由 canvas 绘制） ================= */
+.shell{
+  position:absolute;inset:0;margin:auto;
+  width:min(1180px, calc(100vw - 96px));
+  height:min(790px, calc(100vh - 96px));
+  border-radius:40px;
+  overflow:hidden;
+  background:rgba(255,255,255,.14);
+  backdrop-filter:blur(7px) saturate(155%) brightness(1.03);
+  -webkit-backdrop-filter:blur(7px) saturate(155%) brightness(1.03);
+  backdrop-filter:url(#lgWindow) blur(7px) saturate(155%) brightness(1.03);
+  -webkit-backdrop-filter:url(#lgWindow) blur(7px) saturate(155%) brightness(1.03);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.55),
+    inset 0 1px 0 rgba(255,255,255,.95),
+    0 46px 110px -46px rgba(20,35,70,.55);
+}
+/* 白纱 + 顶部反光：让磨砂层更像玻璃而不是模糊照片 */
+.shell::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(115% 62% at 8% -14%, rgba(255,255,255,.40), rgba(255,255,255,0) 60%),
+    linear-gradient(180deg, rgba(255,255,255,.26), rgba(255,255,255,.10) 45%, rgba(255,255,255,.22));
+}
+@media(max-width:860px){
+  .shell{width:calc(100vw - 24px);height:calc(100vh - 24px);border-radius:26px}
+}
 
-  /* ================= 头部 ================= */
-  header{padding:78px 0 30px;text-align:center}
-  .logo{
-    display:inline-flex;align-items:center;gap:9px;
-    font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;font-weight:600;
-    color:var(--accent);
-    background:var(--glass);
-    border:1px solid var(--line);
-    backdrop-filter:blur(18px) saturate(160%);
-    -webkit-backdrop-filter:blur(18px) saturate(160%);
-    padding:8px 18px;border-radius:999px;margin-bottom:26px;
-    box-shadow:0 8px 24px -14px rgba(45,65,110,.5);
-  }
-  .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(79,116,196,.14);animation:pulse 2.6s ease-in-out infinite}
-  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.75)}}
+.app{display:grid;grid-template-columns:236px minmax(0,1fr);height:100%;position:relative;z-index:1}
 
-  h1{
-    font-size:clamp(32px,5.4vw,52px);font-weight:800;letter-spacing:-.025em;line-height:1.15;
-    background:linear-gradient(104deg,#1f2a44 6%,#4f74c4 44%,#8e7cc4 68%,#c76fa8 96%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
-  .sub{color:var(--ink-2);margin-top:16px;font-size:15px;font-weight:400}
-  .meta{margin-top:24px;display:flex;gap:9px;justify-content:center;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2)}
-  .meta span{
-    background:var(--glass);border:1px solid var(--line);
-    backdrop-filter:blur(14px) saturate(150%);
-    -webkit-backdrop-filter:blur(14px) saturate(150%);
-    padding:6px 14px;border-radius:10px;
-    box-shadow:0 6px 18px -14px rgba(45,65,110,.6);
-  }
-  .meta b{color:var(--accent);font-weight:700}
+/* ================= 侧栏 ================= */
+.side{
+  display:flex;flex-direction:column;
+  padding:28px 18px 22px 26px;
+  border-right:1px solid var(--hair);
+}
+.brand{display:flex;align-items:center;gap:9px;margin-bottom:26px}
+.brand .dot{
+  width:8px;height:8px;border-radius:50%;flex:none;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  box-shadow:0 0 0 4px rgba(63,107,192,.14);
+  animation:pulse 2.6s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.42;transform:scale(.78)}}
+.brand b{font-size:12.5px;font-weight:800;letter-spacing:.01em}
+.brand span{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-4);font-weight:700}
 
-  /* ================= 搜索 ================= */
-  .search-wrap{position:sticky;top:0;z-index:30;padding:14px 0 12px}
-  .search-wrap::before{
-    content:"";position:absolute;inset:-14px -24px 0;z-index:-1;
-    background:linear-gradient(180deg,rgba(240,245,253,.92) 0%,rgba(240,245,253,.78) 62%,rgba(240,245,253,0) 100%);
-    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-    -webkit-mask-image:linear-gradient(180deg,#000 72%,transparent);
-    mask-image:linear-gradient(180deg,#000 72%,transparent);
-  }
-  .search-box{position:relative}
-  .search-box svg{position:absolute;left:18px;top:50%;transform:translateY(-50%);width:17px;height:17px;stroke:var(--ink-3);fill:none;stroke-width:2;stroke-linecap:round}
-  #search{
-    width:100%;padding:15px 18px 15px 48px;font-size:15px;color:var(--ink);
-    background:var(--glass-strong);
-    border:1px solid var(--line);border-radius:16px;
-    backdrop-filter:blur(24px) saturate(170%);
-    -webkit-backdrop-filter:blur(24px) saturate(170%);
-    outline:none;font-family:inherit;
-    transition:border-color .2s,box-shadow .2s,background .2s;
-    box-shadow:0 10px 34px -20px rgba(45,65,110,.7);
-  }
-  #search::placeholder{color:var(--ink-4)}
-  #search:focus{border-color:rgba(79,116,196,.55);background:rgba(255,255,255,.86);box-shadow:0 0 0 4px rgba(79,116,196,.12),0 12px 34px -20px rgba(45,65,110,.8)}
-  .hint-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:var(--ink-3);min-height:18px;padding:0 4px}
-  kbd{font-family:var(--mono);font-size:10.5px;background:rgba(255,255,255,.8);border:1px solid var(--line-soft);border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--ink-2)}
+.nav{display:flex;flex-direction:column;gap:2px;flex:1;overflow-y:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav .lbl{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-4);font-weight:700;margin:0 0 8px 10px}
+.nav a{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  color:var(--ink-2);text-decoration:none;font-size:13px;
+  padding:7px 11px;border-radius:10px;transition:.16s;
+}
+.nav a .n{
+  font-family:var(--mono);font-size:9.5px;color:var(--ink-4);
+  background:rgba(255,255,255,.55);border-radius:5px;padding:0 5px;line-height:15px;
+}
+.nav a:hover{background:rgba(255,255,255,.46);color:var(--accent)}
+.nav a.on{background:rgba(255,255,255,.62);color:var(--accent);font-weight:650;box-shadow:inset 0 0 0 1px rgba(255,255,255,.75)}
+.nav a.on .n{color:var(--accent)}
 
-  /* ================= 布局 ================= */
-  .layout{display:grid;grid-template-columns:1fr;gap:26px;margin-top:12px}
-  nav.toc{display:none}
-  @media(min-width:1000px){
-    .layout{grid-template-columns:186px 1fr;align-items:start}
-    nav.toc{
-      display:block;position:sticky;top:132px;font-size:13.5px;
-      background:var(--glass-soft);border:1px solid var(--line-soft);
-      backdrop-filter:blur(20px) saturate(150%);
-      -webkit-backdrop-filter:blur(20px) saturate(150%);
-      border-radius:16px;padding:16px 12px;
-      box-shadow:0 14px 40px -28px rgba(45,65,110,.8);
-    }
-    nav.toc p{color:var(--ink-4);font-size:10px;letter-spacing:.18em;text-transform:uppercase;margin:0 0 10px 8px;font-weight:700}
-    nav.toc a{display:block;color:var(--ink-2);text-decoration:none;padding:7px 10px;border-radius:9px;transition:.18s;border-left:2px solid transparent}
-    nav.toc a:hover{color:var(--accent);background:rgba(255,255,255,.55);border-left-color:var(--accent)}
-  }
+.side-foot{margin-top:14px;padding-top:14px;border-top:1px solid var(--hair);font-size:11px;color:var(--ink-3);line-height:1.7}
+.side-foot b{display:block;color:var(--ink-2);font-family:var(--mono);font-size:11.5px}
+.side-foot a{color:var(--ink-3);text-decoration:none;border-bottom:1px dotted rgba(90,110,150,.45)}
+.side-foot a:hover{color:var(--accent)}
 
-  /* ================= 分组标题 ================= */
-  .group-head{display:flex;align-items:center;gap:12px;margin:42px 0 14px;scroll-margin-top:130px}
-  .group-head:first-child{margin-top:6px}
-  .group-head .bar{width:3px;height:18px;border-radius:2px;background:linear-gradient(180deg,var(--accent),var(--accent-2));flex:none}
-  .group-head h2{font-size:16.5px;font-weight:800;letter-spacing:.01em;color:var(--ink);white-space:nowrap}
-  .group-head .num{
-    font-family:var(--mono);font-size:10.5px;color:var(--ink-3);
-    background:rgba(255,255,255,.55);border:1px solid var(--line-soft);
-    border-radius:999px;padding:1px 8px;flex:none;
-  }
-  .group-head .ln{flex:1;height:1px;background:linear-gradient(90deg,rgba(120,140,180,.4),transparent)}
+/* ================= 主区 ================= */
+.main{display:flex;flex-direction:column;min-height:0;min-width:0}
+.topbar{flex:none;padding:20px 40px 6px}
+.toolbar{
+  background:rgba(255,255,255,.42);
+  border-radius:16px;
+  padding:11px 13px 9px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.8),
+    inset 0 1px 0 rgba(255,255,255,.95),
+    0 14px 30px -22px rgba(20,35,70,.8);
+}
+.search-box{position:relative}
+.search-box svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--ink-3);fill:none;stroke-width:2;stroke-linecap:round}
+#search{
+  width:100%;padding:11px 15px 11px 40px;font-size:13.5px;color:var(--ink);
+  background:rgba(255,255,255,.34);
+  border:1px solid rgba(255,255,255,.85);border-radius:11px;
+  outline:none;font-family:inherit;
+  transition:border-color .18s,box-shadow .18s,background .18s;
+}
+#search::placeholder{color:var(--ink-4)}
+#search:focus{border-color:rgba(63,107,192,.5);background:#fff;box-shadow:0 0 0 4px rgba(63,107,192,.10)}
+.hint-row{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:11px;color:var(--ink-3);padding:0 3px}
+kbd{font-family:var(--mono);font-size:10px;background:rgba(255,255,255,.72);border:1px solid var(--hair);border-bottom-width:2px;border-radius:4px;padding:0 5px;color:var(--ink-2)}
 
-  /* ================= 卡片 ================= */
-  .card{
-    background:var(--glass);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:26px 26px 24px;margin-bottom:16px;
-    position:relative;overflow:hidden;
-    backdrop-filter:blur(26px) saturate(165%);
-    -webkit-backdrop-filter:blur(26px) saturate(165%);
-    box-shadow:var(--shadow);
-    transition:transform .22s cubic-bezier(.2,.7,.3,1),box-shadow .22s,background .22s;
-    scroll-margin-top:132px;
-  }
-  .card::before{
-    content:"";position:absolute;inset:0;
-    background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,0) 42%);
-    opacity:.9;pointer-events:none;
-  }
-  .card::after{
-    content:"";position:absolute;left:0;top:22px;bottom:22px;width:2.5px;border-radius:3px;
-    background:linear-gradient(180deg,var(--accent),var(--accent-2));
-    opacity:0;transition:opacity .25s;
-  }
-  .card:hover{transform:translateY(-3px);background:rgba(255,255,255,.66);box-shadow:0 26px 60px -26px rgba(45,65,110,.55),0 2px 10px -4px rgba(45,65,110,.14)}
-  .card:hover::after{opacity:1}
-  .card.hidden{display:none}
+.scroll{
+  flex:1;min-height:0;
+  overflow-y:auto;overflow-x:hidden;
+  padding:0 40px 70px;
+  scroll-behavior:smooth;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(90,110,150,.32) transparent;
+}
+.scroll::-webkit-scrollbar{width:10px}
+.scroll::-webkit-scrollbar-thumb{
+  background:rgba(90,110,150,.30);border-radius:99px;
+  border:3px solid transparent;background-clip:content-box;
+}
+.scroll::-webkit-scrollbar-thumb:hover{background:rgba(90,110,150,.48);background-clip:content-box}
+.inner{max-width:860px;margin:0 auto;padding-top:20px}
 
-  .card-head{display:flex;flex-wrap:wrap;align-items:center;gap:11px;margin-bottom:11px;position:relative}
-  .cmd{
-    font-family:var(--mono);font-size:17.5px;font-weight:600;color:var(--accent);
-    background:rgba(255,255,255,.72);
-    border:1px solid rgba(79,116,196,.28);
-    padding:6px 14px;border-radius:11px;letter-spacing:.01em;cursor:pointer;
-    transition:background .18s,border-color .18s,transform .12s,box-shadow .18s;
-    box-shadow:0 4px 14px -8px rgba(79,116,196,.8);
-  }
-  .cmd:hover{background:#fff;border-color:rgba(79,116,196,.6);box-shadow:0 8px 20px -10px rgba(79,116,196,.9)}
-  .cmd:active{transform:scale(.975)}
-  .cmd .ph{color:var(--ink-3);font-weight:500}
-  .cmd .opt{color:var(--accent-2);font-weight:500}
+/* ================= 头部 ================= */
+.hero{margin-bottom:8px}
+.kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--accent);
+  background:rgba(255,255,255,.46);border:1px solid rgba(255,255,255,.78);
+  padding:5px 13px;border-radius:999px;margin-bottom:16px;
+}
+h1{
+  font-size:clamp(28px,3.6vw,40px);font-weight:850;letter-spacing:-.028em;line-height:1.12;
+  background:linear-gradient(100deg,#18213a 8%,#3f6bc0 48%,#8a6fbe 72%,#b95f9b 98%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{color:var(--ink-2);font-size:13.5px;margin-top:10px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;font-size:11.5px;color:var(--ink-2)}
+.meta span{background:rgba(255,255,255,.44);border:1px solid rgba(255,255,255,.72);padding:4px 11px;border-radius:8px}
+.meta b{color:var(--accent);font-weight:750}
 
-  .tag{
-    font-size:11px;padding:3px 10px;border-radius:999px;font-weight:600;
-    border:1px solid var(--line-soft);color:var(--ink-3);background:rgba(255,255,255,.55);
-    letter-spacing:.04em;white-space:nowrap;
-  }
-  .tag.no-prefix{border-color:rgba(201,138,46,.38);color:var(--warn);background:rgba(255,246,229,.72)}
-  .tag.voice{border-color:rgba(79,116,196,.32);color:var(--accent);background:rgba(235,241,255,.78)}
-  .tag.game{border-color:rgba(199,111,168,.32);color:var(--accent-2);background:rgba(255,238,248,.75)}
-  .tag.sys{border-color:rgba(63,155,150,.32);color:var(--accent-3);background:rgba(232,249,247,.75)}
-  .tag.admin{border-color:rgba(199,111,168,.45);color:#a8447f;background:rgba(255,232,244,.85)}
-  .tag.points{border-color:rgba(201,138,46,.42);color:var(--warn);background:rgba(255,246,229,.8)}
+/* ================= 分组 ================= */
+.group-head{display:flex;align-items:center;gap:11px;margin:34px 0 12px;scroll-margin-top:92px}
+.group-head:first-of-type{margin-top:22px}
+.group-head .bar{width:3px;height:16px;border-radius:2px;flex:none;background:linear-gradient(180deg,var(--accent),var(--accent-2))}
+.group-head h2{font-size:15px;font-weight:800;white-space:nowrap}
+.group-head .num{font-family:var(--mono);font-size:10px;color:var(--ink-3);background:rgba(255,255,255,.5);border-radius:999px;padding:1px 7px;flex:none}
+.group-head .ln{flex:1;height:1px;background:linear-gradient(90deg,var(--hair),transparent)}
 
-  .desc{color:var(--ink-2);font-size:14.5px;position:relative}
-  .desc b{color:var(--accent);font-weight:650}
+/* ================= 卡片（磨砂） ================= */
+.card{
+  background:rgba(255,255,255,.55);
+  border-radius:18px;
+  padding:20px 22px 18px;margin-bottom:11px;
+  position:relative;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.72),
+    inset 0 1px 0 rgba(255,255,255,.9),
+    0 14px 30px -24px rgba(20,35,70,.85);
+  transition:background .2s,transform .2s,box-shadow .2s;
+  scroll-margin-top:92px;
+}
+.card:hover{
+  background:rgba(255,255,255,.68);
+  transform:translateY(-2px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.85),
+    inset 0 1px 0 rgba(255,255,255,.95),
+    0 22px 44px -26px rgba(20,35,70,.9);
+}
+.card.hidden{display:none}
 
-  /* 紧凑卡片（收藏集用） */
-  .card.mini{padding:21px 24px 19px}
-  .card.mini .cmd{font-size:16px;padding:5px 12px}
-  .card.mini .desc{font-size:14px}
-  .card.mini .examples{margin-top:13px}
+.card-head{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-bottom:9px}
+.cmd{
+  font-family:var(--mono);font-size:15.5px;font-weight:600;color:var(--accent);
+  background:rgba(255,255,255,.34);
+  border:1px solid rgba(255,255,255,.85);
+  padding:5px 12px;border-radius:10px;cursor:pointer;
+  transition:background .16s,border-color .16s,transform .1s;
+  box-shadow:0 3px 10px -8px rgba(20,35,70,.9);
+}
+.cmd:hover{background:rgba(255,255,255,.72);border-color:rgba(63,107,192,.42)}
+.cmd:active{transform:scale(.98)}
+.cmd .ph{color:var(--ink-3);font-weight:400}
+.cmd .opt{color:var(--accent-2);font-weight:500}
 
-  /* 子参数 */
-  .subs{margin-top:16px;display:grid;gap:8px;position:relative}
-  .sub-item{
-    display:grid;grid-template-columns:minmax(0,1fr);gap:3px;
-    background:rgba(255,255,255,.42);
-    border:1px solid var(--line-soft);
-    border-radius:12px;padding:12px 15px;
-  }
-  @media(min-width:620px){
-    .sub-item{grid-template-columns:auto 1fr;gap:18px;align-items:baseline}
-  }
-  .sub-key{font-family:var(--mono);font-size:13.5px;color:var(--accent);white-space:nowrap;font-weight:600}
-  .sub-key .ph{color:var(--ink-3);font-weight:400}
-  .sub-val{font-size:13.5px;color:var(--ink-2)}
-  .sub-val b{color:var(--accent-2);font-weight:650}
+.tag{
+  font-size:10.5px;padding:2px 9px;border-radius:999px;font-weight:650;
+  border:1px solid rgba(90,110,150,.28);color:var(--ink-3);background:rgba(255,255,255,.5);
+  white-space:nowrap;
+}
+.tag.no-prefix{border-color:rgba(169,115,28,.36);color:var(--warn);background:rgba(255,246,229,.72)}
+.tag.voice{border-color:rgba(63,107,192,.30);color:var(--accent);background:rgba(238,243,255,.78)}
+.tag.game{border-color:rgba(185,95,155,.30);color:var(--accent-2);background:rgba(255,240,249,.72)}
+.tag.sys{border-color:rgba(47,143,138,.30);color:var(--accent-3);background:rgba(234,249,247,.72)}
+.tag.points{border-color:rgba(169,115,28,.38);color:var(--warn);background:rgba(255,247,232,.78)}
 
-  /* 示例 */
-  .examples{margin-top:16px;position:relative}
-  .examples-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-4);margin-bottom:9px;font-weight:700}
-  .ex{
-    display:block;font-family:var(--mono);font-size:12.8px;color:var(--ink-2);
-    background:rgba(255,255,255,.5);
-    border:1px solid var(--line-soft);border-left:2.5px solid rgba(79,116,196,.35);
-    padding:9px 13px;border-radius:0 10px 10px 0;margin-bottom:6px;
-    white-space:pre-wrap;word-break:break-word;cursor:pointer;
-    transition:.18s;
-  }
-  .ex:hover{background:rgba(255,255,255,.82);border-left-color:var(--accent);color:var(--ink);transform:translateX(2px)}
+.desc{color:var(--ink-2);font-size:13.5px}
+.desc b{color:var(--accent);font-weight:700}
+.desc code{font-family:var(--mono);font-size:12.5px;color:var(--accent);background:rgba(255,255,255,.58);padding:1px 6px;border-radius:5px}
 
-  /* 公式高亮 */
-  .formula{
-    display:inline-block;font-family:var(--mono);font-size:13px;font-weight:700;
-    color:#8a5a12;background:linear-gradient(180deg,rgba(255,241,214,.95),rgba(255,231,190,.9));
-    border:1px solid rgba(201,138,46,.35);border-radius:8px;padding:2px 9px;margin:0 2px;
-  }
+.subs{margin-top:13px;display:grid;gap:7px}
+.sub-item{
+  display:grid;grid-template-columns:minmax(0,1fr);gap:2px;
+  background:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.6);
+  border-radius:11px;padding:10px 13px;
+}
+@media(min-width:600px){.sub-item{grid-template-columns:auto 1fr;gap:16px;align-items:baseline}}
+.sub-key{font-family:var(--mono);font-size:12.8px;color:var(--accent);white-space:nowrap;font-weight:650}
+.sub-key .ph{color:var(--ink-3);font-weight:400}
+.sub-val{font-size:13px;color:var(--ink-2)}
+.sub-val b{color:var(--accent-2);font-weight:650}
 
-  /* ================= 区块标题 ================= */
-  .section-title{
-    font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:700;
-    margin:44px 0 15px;display:flex;align-items:center;gap:14px;
-  }
-  .section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(120,140,180,.35),transparent)}
+.examples{margin-top:13px}
+.examples-label{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-4);margin-bottom:7px;font-weight:700}
+.ex{
+  display:block;font-family:var(--mono);font-size:12.3px;color:var(--ink-2);
+  background:rgba(255,255,255,.44);border:1px solid rgba(255,255,255,.62);
+  border-left:2.5px solid rgba(63,107,192,.34);
+  padding:8px 12px;border-radius:0 9px 9px 0;margin-bottom:5px;
+  white-space:pre-wrap;word-break:break-word;cursor:pointer;transition:.16s;
+}
+.ex:hover{background:rgba(255,255,255,.78);border-left-color:var(--accent);color:var(--ink);transform:translateX(2px)}
 
-  /* ================= 表格 ================= */
-  .table-scroll{
-    overflow-x:auto;-webkit-overflow-scrolling:touch;
-    border-radius:16px;border:1px solid var(--line);
-    background:var(--glass);
-    backdrop-filter:blur(24px) saturate(160%);
-    -webkit-backdrop-filter:blur(24px) saturate(160%);
-    box-shadow:var(--shadow);
-  }
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th,td{text-align:left;padding:13px 18px;border-bottom:1px solid rgba(120,140,180,.16)}
-  th{background:rgba(255,255,255,.42);color:var(--ink-3);font-weight:700;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
-  tr:last-child td{border-bottom:none}
-  tbody tr{transition:background .16s}
-  tbody tr:hover{background:rgba(255,255,255,.45)}
-  td code{font-family:var(--mono);font-size:12.8px;color:var(--accent);background:rgba(255,255,255,.7);border:1px solid rgba(79,116,196,.18);padding:2px 8px;border-radius:6px;white-space:nowrap}
-  td:last-child{color:var(--ink-2)}
-  .row-group td{background:rgba(255,255,255,.34);color:var(--ink-3);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:9px 18px}
+.formula{
+  display:inline-block;font-family:var(--mono);font-size:12.5px;font-weight:750;
+  color:#7d5310;background:linear-gradient(180deg,rgba(255,242,218,.98),rgba(255,232,193,.95));
+  border:1px solid rgba(169,115,28,.32);border-radius:7px;padding:1px 8px;margin:0 2px;
+}
 
-  /* ================= 说明卡 ================= */
-  .notes{display:grid;gap:10px}
-  @media(min-width:640px){.notes{grid-template-columns:1fr 1fr}}
-  .note{
-    background:var(--glass-soft);
-    border:1px solid var(--line-soft);border-radius:14px;padding:17px 19px;
-    font-size:13.5px;color:var(--ink-2);
-    backdrop-filter:blur(18px) saturate(150%);
-    -webkit-backdrop-filter:blur(18px) saturate(150%);
-  }
-  .note strong{display:block;color:var(--ink);font-size:12.5px;margin-bottom:6px;letter-spacing:.03em;font-weight:700}
-  .note code{font-family:var(--mono);color:var(--accent);font-size:12.5px;background:rgba(255,255,255,.6);padding:1px 6px;border-radius:5px}
+/* ================= 区块标题 ================= */
+.section-title{
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:750;
+  margin:38px 0 12px;display:flex;align-items:center;gap:12px;scroll-margin-top:92px;
+}
+.section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--hair),transparent)}
 
-  /* ================= 联系 ================= */
-  .connect{display:grid;gap:14px}
-  @media(min-width:700px){.connect{grid-template-columns:1fr 1fr}}
-  .connect-card{
-    position:relative;overflow:hidden;
-    background:var(--glass-strong);
-    border:1px solid var(--line);border-radius:var(--radius);
-    padding:24px 24px 22px;
-    backdrop-filter:blur(28px) saturate(170%);
-    -webkit-backdrop-filter:blur(28px) saturate(170%);
-    box-shadow:var(--shadow);
-    transition:transform .22s,box-shadow .22s;
-    text-decoration:none;color:inherit;display:block;
-  }
-  .connect-card:hover{transform:translateY(-3px);box-shadow:0 26px 60px -26px rgba(45,65,110,.55)}
-  .connect-card .k{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-4);font-weight:700}
-  .connect-card .v{
-    font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink);
-    margin:9px 0 6px;letter-spacing:.02em;word-break:break-all;line-height:1.3;
-  }
-  .connect-card .v.link{color:var(--accent)}
-  .connect-card .t{font-size:13px;color:var(--ink-3)}
-  .connect-card .go{
-    position:absolute;right:22px;top:22px;width:32px;height:32px;border-radius:50%;
-    background:rgba(255,255,255,.7);border:1px solid var(--line-soft);
-    display:grid;place-items:center;color:var(--accent);font-size:15px;
-    transition:.2s;
-  }
-  .connect-card:hover .go{background:var(--accent);color:#fff;border-color:transparent}
-  .copy-mini{
-    display:inline-flex;align-items:center;gap:6px;
-    margin-top:12px;font-size:11.5px;font-weight:600;color:var(--accent);
-    background:rgba(255,255,255,.75);border:1px solid rgba(79,116,196,.24);
-    padding:5px 12px;border-radius:8px;cursor:pointer;font-family:var(--sans);
-    transition:.18s;
-  }
-  .copy-mini:hover{background:#fff;border-color:rgba(79,116,196,.5)}
+/* ================= 表格 ================= */
+.table-scroll{
+  overflow-x:auto;border-radius:16px;
+  background:rgba(255,255,255,.52);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.75), 0 14px 30px -24px rgba(20,35,70,.85);
+}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:11px 16px;border-bottom:1px solid rgba(90,110,150,.16)}
+th{background:rgba(255,255,255,.42);color:var(--ink-3);font-weight:750;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,.34)}
+td code{font-family:var(--mono);font-size:12.2px;color:var(--accent);background:rgba(255,255,255,.6);border:1px solid rgba(63,107,192,.14);padding:1px 7px;border-radius:5px;white-space:nowrap}
+td:last-child{color:var(--ink-2)}
+.row-group td{background:rgba(255,255,255,.32);color:var(--ink-3);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:750;padding:7px 16px}
 
-  /* ================= 页脚 ================= */
-  footer{
-    margin-top:52px;padding-top:26px;
-    border-top:1px solid rgba(120,140,180,.24);
-    text-align:center;font-size:12.5px;color:var(--ink-3);
-  }
-  footer .k{color:var(--ink-2);font-family:var(--mono);font-size:12px}
+/* ================= 说明 ================= */
+.notes{display:grid;gap:9px}
+@media(min-width:600px){.notes{grid-template-columns:1fr 1fr}}
+.note{
+  background:rgba(255,255,255,.42);border:1px solid rgba(255,255,255,.62);
+  border-radius:13px;padding:14px 16px;font-size:13px;color:var(--ink-2);
+}
+.note strong{display:block;color:var(--ink);font-size:12px;margin-bottom:4px;font-weight:750}
+.note code{font-family:var(--mono);color:var(--accent);font-size:12px;background:rgba(255,255,255,.6);padding:0 5px;border-radius:4px}
 
-  /* ================= Toast ================= */
-  #toast{
-    position:fixed;left:50%;bottom:36px;transform:translate(-50%,24px);
-    background:rgba(34,43,63,.94);color:#fff;font-size:13px;font-weight:600;
-    padding:11px 22px;border-radius:999px;opacity:0;pointer-events:none;
-    transition:opacity .24s,transform .24s;z-index:99;
-    box-shadow:0 16px 40px -14px rgba(34,43,63,.7);
-    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-    max-width:88vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  }
-  #toast.show{opacity:1;transform:translate(-50%,0)}
+/* ================= 联系 ================= */
+.connect{display:grid;gap:11px}
+@media(min-width:600px){.connect{grid-template-columns:1fr 1fr}}
+.connect-card{
+  position:relative;overflow:hidden;display:block;text-decoration:none;color:inherit;
+  background:rgba(255,255,255,.56);
+  border-radius:17px;padding:18px 20px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.78), 0 14px 30px -24px rgba(20,35,70,.85);
+  transition:transform .2s,background .2s;
+}
+.connect-card:hover{transform:translateY(-2px);background:rgba(255,255,255,.7)}
+.connect-card .k{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-4);font-weight:750}
+.connect-card .v{font-family:var(--mono);font-size:19px;font-weight:750;margin:7px 0 4px;word-break:break-all;line-height:1.25}
+.connect-card .v.link{color:var(--accent)}
+.connect-card .t{font-size:12px;color:var(--ink-3)}
+.connect-card .go{
+  position:absolute;right:18px;top:18px;width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,.66);display:grid;place-items:center;color:var(--accent);font-size:13px;transition:.2s;
+}
+.connect-card:hover .go{background:var(--accent);color:#fff}
+.copy-mini{
+  display:inline-flex;align-items:center;margin-top:10px;
+  font-size:11px;font-weight:650;color:var(--accent);
+  background:rgba(255,255,255,.66);border:1px solid rgba(63,107,192,.22);
+  padding:4px 11px;border-radius:7px;cursor:pointer;font-family:var(--sans);transition:.16s;
+}
+.copy-mini:hover{background:#fff;border-color:rgba(63,107,192,.45)}
 
-  #empty{display:none;text-align:center;padding:56px 20px;color:var(--ink-3);border:1px dashed rgba(120,140,180,.4);border-radius:var(--radius);background:var(--glass-soft);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-  #empty.visible{display:block}
-  #empty .big{font-size:26px;margin-bottom:8px}
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--hair);text-align:center;font-size:11.5px;color:var(--ink-3)}
+footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
 
-  ::selection{background:rgba(79,116,196,.22);color:var(--ink)}
-  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+#empty{display:none;text-align:center;padding:46px 20px;color:var(--ink-3);border:1px dashed rgba(90,110,150,.4);border-radius:16px;background:rgba(255,255,255,.4)}
+#empty.visible{display:block}
+
+#toast{
+  position:fixed;left:50%;bottom:34px;transform:translate(-50%,20px);
+  background:rgba(24,32,50,.94);color:#fff;font-size:12.5px;font-weight:650;
+  padding:10px 20px;border-radius:999px;opacity:0;pointer-events:none;
+  transition:opacity .2s,transform .2s;z-index:99;
+  box-shadow:0 16px 40px -14px rgba(24,32,50,.6);
+  max-width:80vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+::selection{background:rgba(63,107,192,.22)}
+
+@media(max-width:860px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .scroll{padding:0 18px 60px}
+  .topbar{padding:14px 18px 4px}
+  .inner{padding-top:14px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
 </style>
 </head>
 <body>
 
-<div class="bg" aria-hidden="true">
-  <i class="b1"></i>
-  <i class="b2"></i>
-  <i class="b3"></i>
-  <i class="veil"></i>
-  <i class="grain"></i>
-</div>
 
-<div class="wrap">
 
-  <header>
-    <div class="logo"><span class="dot"></span> Command Reference</div>
-    <h1>Bot 指令手册</h1>
-    <p class="sub">全部可用指令一览 · 点击任意指令即可复制</p>
-    <div class="meta">
-      <span>共 <b>15</b> 条指令</span>
-      <span>前缀 <b>!</b></span>
-      <span>群号 <b>1067790453</b></span>
-      <span>站点 <b>azure712.space</b></span>
+<div id="root">
+  
+
+  <div class="shell" id="shell">
+    <div class="app">
+
+      <aside class="side">
+        <div class="brand">
+          <span class="dot"></span>
+          <div><b>Bot 指令手册</b><br><span>Command Reference</span></div>
+        </div>
+        <nav class="nav" id="nav">
+          <div class="lbl">目录</div>
+          <a href="#g-interact" data-t="g-interact">互动与积分<span class="n">3</span></a>
+          <a href="#g-music" data-t="g-music">音乐<span class="n">3</span></a>
+          <a href="#g-collect" data-t="g-collect">收藏集抽卡<span class="n">6</span></a>
+          <a href="#g-sys" data-t="g-sys">系统<span class="n">1</span></a>
+          <a href="#cheatsheet" data-t="cheatsheet">速查表</a>
+          <a href="#connect" data-t="connect">联系</a>
+        </nav>
+        <div class="side-foot">
+          服务群<b>1067790453</b>
+          <a href="https://azure712.space" target="_blank" rel="noopener noreferrer">azure712.space</a>
+        </div>
+      </aside>
+
+      <div class="main">
+        <div class="topbar">
+          <div class="toolbar">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+              <input id="search" type="text" placeholder="搜索指令、功能或参数…（按 / 聚焦）" autocomplete="off">
+            </div>
+            <div class="hint-row">
+              <span id="count">显示 13 / 13 条指令</span>
+              <span><kbd>Esc</kbd> 清空搜索</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll" id="scroll">
+          <div class="inner">
+
+            <header class="hero">
+              <span class="kicker"><span class="dot" style="width:6px;height:6px;box-shadow:none"></span>Command Reference</span>
+              <h1>Bot 指令手册</h1>
+              <p class="sub">全部可用指令一览 · 点击任意指令即可复制</p>
+              <div class="meta">
+                <span>共 <b>13</b> 条指令</span>
+                <span>前缀 <b>!</b></span>
+                <span>群号 <b>1067790453</b></span>
+                <span>站点 <b>azure712.space</b></span>
+              </div>
+            </header>
+
+          <!-- ============ 互动与积分 ============ -->
+          <div class="group-head" id="g-interact">
+            <span class="bar"></span><h2>互动与积分</h2><span class="num">3</span><span class="ln"></span>
+          </div>
+
+          <article class="card" id="like" data-key="赞我 点赞 无前缀 喜欢 互动">
+            <div class="card-head">
+              <span class="cmd" data-copy="赞我">赞我</span>
+              <span class="tag no-prefix">无前缀</span>
+            </div>
+            <p class="desc">让 bot 给你点赞。<b>不需要</b> <code>!</code> 前缀，直接发送这两个字即可。</p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="赞我">赞我</span>
+            </div>
+          </article>
+
+          <article class="card" id="signin" data-key="签到 每日 积分 奖励 连签 天数 打卡 无前缀">
+            <div class="card-head">
+              <span class="cmd" data-copy="签到">签到</span>
+              <span class="tag no-prefix">无前缀</span>
+              <span class="tag points">积分</span>
+            </div>
+            <p class="desc">
+              每日签到领取积分，奖励为 <span class="formula">50 + 10n</span> 积分，<b>n</b> 为连续签到天数，
+              连签越久每天领得越多。同样<b>不需要</b> <code>!</code> 前缀。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="签到">签到</span>
+            </div>
+          </article>
+
+          <article class="card" id="favor" data-key="!查询好感度 好感度 数值 查询 状态">
+            <div class="card-head">
+              <span class="cmd" data-copy="!查询好感度">!查询好感度</span>
+              <span class="tag game">互动</span>
+            </div>
+            <p class="desc">查询当前的<b>好感度数值</b>。</p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!查询好感度">!查询好感度</span>
+            </div>
+          </article>
+
+          <!-- ============ 音乐 ============ -->
+          <div class="group-head" id="g-music">
+            <span class="bar"></span><h2>音乐</h2><span class="num">3</span><span class="ln"></span>
+          </div>
+
+          <article class="card" id="lyrics" data-key="!接歌词 歌词 歌曲 歌名 search from 接龙 猜歌 退出 结束 quit">
+            <div class="card-head">
+              <span class="cmd" data-copy="!接歌词">!接歌词</span>
+              <span class="tag game">互动游戏</span>
+            </div>
+            <p class="desc">歌词接龙游戏指令组。<b>不带参数</b>时随机开始；也可以用下面的参数指定歌曲与起始句。游戏进行中可随时退出。</p>
+            <div class="subs">
+              <div class="sub-item">
+                <div class="sub-key">search <span class="ph">&lt;歌名&gt;</span></div>
+                <div class="sub-val">搜索歌曲并从<b>第一句</b>开始接</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">from <span class="ph">&lt;歌名&gt;</span> <span class="ph">&lt;歌词&gt;</span></div>
+                <div class="sub-val">从<b>指定歌词</b>开始游戏</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">退出接歌 / 结束接歌 / quit</div>
+                <div class="sub-val">结束当前歌词接龙，三种写法任选其一</div>
+              </div>
+            </div>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!接歌词 search 晴天">!接歌词 search 晴天</span>
+              <span class="ex" data-copy="!接歌词 from I LOVE U 我爱你">!接歌词 from I LOVE U 我爱你</span>
+              <span class="ex" data-copy="!接歌词 退出接歌">!接歌词 退出接歌</span>
+            </div>
+          </article>
+
+          <article class="card" id="song" data-key="!点歌 点歌 歌名 语音 转换 发送 音乐 完整">
+            <div class="card-head">
+              <span class="cmd" data-copy="!点歌 ">!点歌 <span class="ph">&lt;歌名&gt;</span></span>
+              <span class="tag voice">语音</span>
+            </div>
+            <p class="desc">将指定歌曲转换为<b>语音</b>并发送。歌名建议写全名以便准确匹配。</p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!点歌 起风了">!点歌 起风了</span>
+            </div>
+          </article>
+
+          <article class="card" id="chorus" data-key="!副歌 副歌 高潮 片段 歌名 语音 播放">
+            <div class="card-head">
+              <span class="cmd" data-copy="!副歌 ">!副歌 <span class="ph">&lt;歌名&gt;</span></span>
+              <span class="tag voice">语音</span>
+              <span class="tag">片段</span>
+            </div>
+            <p class="desc">播放一首歌的<b>副歌部分</b>，只截取高潮段落，比整首更快出效果。</p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!副歌 起风了">!副歌 起风了</span>
+              <span class="ex" data-copy="!副歌 晴天">!副歌 晴天</span>
+            </div>
+          </article>
+
+          <!-- ============ 收藏集抽卡 ============ -->
+          <div class="group-head" id="g-collect">
+            <span class="bar"></span><h2>收藏集抽卡</h2><span class="num">6</span><span class="ln"></span>
+          </div>
+
+          <article class="card" id="gacha" data-key="!抽卡 抽卡 十连 单抽 积分 结果 合并转发 隐藏">
+            <div class="card-head">
+              <span class="cmd" data-copy="!抽卡 ">!抽卡 <span class="opt">[1-10]</span></span>
+              <span class="tag points">积分</span>
+            </div>
+            <p class="desc">
+              抽卡，<b>每抽 10 积分</b>。先出一张结果图，原图打包成一条合并转发；
+              抽到<b>小隐藏 / 大隐藏</b>再单独补发动图。参数为抽数，可省略，范围 1–10。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!抽卡">!抽卡</span>
+              <span class="ex" data-copy="!抽卡 10">!抽卡 10</span>
+            </div>
+          </article>
+
+          <article class="card" id="pools" data-key="!卡池 奖池 列表 进度 当前池 24">
+            <div class="card-head">
+              <span class="cmd" data-copy="!卡池">!卡池</span>
+              <span class="tag">查询</span>
+            </div>
+            <p class="desc">列出 <b>24 个奖池</b>和收集进度，<b>►</b> 标出当前奖池。</p>
+          </article>
+
+          <article class="card" id="switchpool" data-key="!换池 切换 奖池 全部卡池 系列名 池名">
+            <div class="card-head">
+              <span class="cmd" data-copy="!换池 ">!换池 <span class="ph">&lt;序号&gt;</span></span>
+              <span class="tag">设置</span>
+            </div>
+            <p class="desc">
+              切换本群奖池。<code>!换池 全部卡池</code> 可抽全部；也支持直接写<b>池名或系列名</b>。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!换池 3">!换池 3</span>
+              <span class="ex" data-copy="!换池 全部卡池">!换池 全部卡池</span>
+            </div>
+          </article>
+
+          <article class="card" id="album" data-key="!图鉴 收集 图鉴 灰色 分页 36 系列">
+            <div class="card-head">
+              <span class="cmd" data-copy="!图鉴">!图鉴</span>
+              <span class="tag">查询</span>
+            </div>
+            <p class="desc">
+              按系列生成本人图鉴，未收集的卡显示为<b>灰色</b>；每页最多 <b>36 张</b>，超出自动分页，
+              多页打包成一条合并转发。
+            </p>
+          </article>
+
+          <article class="card" id="getcard" data-key="!获取卡 原图 卡名 已拥有 查看">
+            <div class="card-head">
+              <span class="cmd" data-copy="!获取卡 ">!获取卡 <span class="ph">&lt;卡名&gt;</span></span>
+              <span class="tag">查询</span>
+            </div>
+            <p class="desc">发送<b>已拥有</b>卡的原图。</p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!获取卡 初音未来">!获取卡 初音未来</span>
+            </div>
+          </article>
+
+          <article class="card" id="gachahelp" data-key="!抽卡帮助 帮助 说明 抽卡">
+            <div class="card-head">
+              <span class="cmd" data-copy="!抽卡帮助">!抽卡帮助</span>
+              <span class="tag sys">帮助</span>
+            </div>
+            <p class="desc">显示收藏集抽卡的<b>帮助</b>。</p>
+          </article>
+
+          <!-- ============ 系统 ============ -->
+          <div class="group-head" id="g-sys">
+            <span class="bar"></span><h2>系统</h2><span class="num">1</span><span class="ln"></span>
+          </div>
+
+          <article class="card" id="help" data-key="!help 帮助 帮助页 指令 说明 菜单">
+            <div class="card-head">
+              <span class="cmd" data-copy="!help">!help</span>
+              <span class="tag sys">系统</span>
+            </div>
+            <p class="desc">显示 bot 自带的<b>帮助页</b>。</p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!help">!help</span>
+            </div>
+          </article>
+
+          <div id="empty">
+            <div style="font-size:22px;margin-bottom:6px">🔍</div>
+            <div>没有匹配的指令，换个关键词试试</div>
+          </div>
+
+          <!-- ============ 速查表 ============ -->
+          <div class="section-title" id="cheatsheet">命令速查表</div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th style="width:46%">指令</th><th>功能</th></tr></thead>
+              <tbody>
+                <tr class="row-group"><td colspan="2">互动与积分</td></tr>
+                <tr><td><code>赞我</code></td><td>让 bot 给你点赞（无前缀）</td></tr>
+                <tr><td><code>签到</code></td><td>每日签到领 50 + 10n 积分（无前缀）</td></tr>
+                <tr><td><code>!查询好感度</code></td><td>查看当前好感度数值</td></tr>
+
+                <tr class="row-group"><td colspan="2">音乐</td></tr>
+                <tr><td><code>!接歌词</code></td><td>随机开始歌词接龙</td></tr>
+                <tr><td><code>!接歌词 search &lt;歌名&gt;</code></td><td>搜索歌曲并从第一句开始</td></tr>
+                <tr><td><code>!接歌词 from &lt;歌名&gt; &lt;歌词&gt;</code></td><td>从指定歌词开始游戏</td></tr>
+                <tr><td><code>!接歌词 退出接歌 / 结束接歌 / quit</code></td><td>结束当前歌词接龙</td></tr>
+                <tr><td><code>!点歌 &lt;歌名&gt;</code></td><td>把整首歌曲转成语音发送</td></tr>
+                <tr><td><code>!副歌 &lt;歌名&gt;</code></td><td>播放歌曲的副歌部分</td></tr>
+
+                <tr class="row-group"><td colspan="2">收藏集抽卡</td></tr>
+                <tr><td><code>!抽卡 [1-10]</code></td><td>抽卡，每抽 10 积分</td></tr>
+                <tr><td><code>!卡池</code></td><td>列出 24 个奖池与收集进度</td></tr>
+                <tr><td><code>!换池 &lt;序号&gt;</code></td><td>切换本群奖池</td></tr>
+                <tr><td><code>!图鉴</code></td><td>按系列生成本人图鉴</td></tr>
+                <tr><td><code>!获取卡 &lt;卡名&gt;</code></td><td>发送已拥有卡的原图</td></tr>
+                <tr><td><code>!抽卡帮助</code></td><td>显示抽卡帮助</td></tr>
+
+                <tr class="row-group"><td colspan="2">系统</td></tr>
+                <tr><td><code>!help</code></td><td>显示帮助页</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- ============ 说明 ============ -->
+          <div class="section-title">使用说明</div>
+          <div class="notes">
+            <div class="note">
+              <strong>关于前缀</strong>
+              绝大多数指令以半角 <code>!</code> 开头。只有 <code>赞我</code> 和 <code>签到</code> 例外，<b>不带任何前缀</b>直接发送。
+            </div>
+            <div class="note">
+              <strong>关于尖括号与方括号</strong>
+              <code>&lt;必填&gt;</code> 必须替换成实际内容；<code>[可选]</code> 可以省略不写。括号本身不用发送。
+            </div>
+            <div class="note">
+              <strong>积分怎么来</strong>
+              每日 <code>签到</code> 得 <b>50 + 10n</b>（n 为连签天数），连签越久每天越多。
+            </div>
+            <div class="note">
+              <strong>积分怎么花</strong>
+              抽卡每抽 <b>10 积分</b>，<code>!抽卡 10</code> 一次消耗 100 积分。
+            </div>
+            <div class="note">
+              <strong>点歌 与 副歌 的区别</strong>
+              <code>!点歌</code> 发送整首；<code>!副歌</code> 只发送副歌片段，想快速听高潮就用副歌。
+            </div>
+            <div class="note">
+              <strong>抽卡的隐藏卡</strong>
+              抽到<b>小隐藏 / 大隐藏</b>时，除了结果图和原图合并转发，还会单独补发动图。
+            </div>
+          </div>
+
+          <!-- ============ 联系 ============ -->
+          <div class="section-title" id="connect">服务群 &amp; 网站</div>
+          <div class="connect">
+            <div class="connect-card">
+              <div class="k">QQ 服务群</div>
+              <div class="v">1067790453</div>
+              <div class="t">问题反馈 · 使用交流 · 功能建议</div>
+              <button class="copy-mini" data-copy="1067790453" type="button">复制群号</button>
+            </div>
+            <a class="connect-card" href="https://azure712.space" target="_blank" rel="noopener noreferrer">
+              <div class="go">↗</div>
+              <div class="k">官方网站</div>
+              <div class="v link">azure712.space</div>
+              <div class="t">点击访问 · 文档与更新公告</div>
+            </a>
+          </div>
+
+          <footer>
+            <p><span class="k">Bot 指令手册</span> · 点击任意指令或示例即可复制</p>
+            <p style="margin-top:5px">服务群 <span class="k">1067790453</span> · 网站 <span class="k">azure712.space</span></p>
+          </footer>
+
+          </div>
+        </div>
+      </div>
     </div>
-  </header>
-
-  <div class="search-wrap">
-    <div class="search-box">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
-      <input id="search" type="text" placeholder="搜索指令、功能或参数…（按 / 聚焦）" autocomplete="off">
-    </div>
-    <div class="hint-row">
-      <span id="count">显示 15 / 15 条指令</span>
-      <span><kbd>Esc</kbd> 清空搜索</span>
-    </div>
-  </div>
-
-  <div class="layout">
-    <nav class="toc">
-      <p>目录</p>
-      <a href="#g-interact">互动与积分</a>
-      <a href="#g-music">音乐</a>
-      <a href="#g-collect">收藏集抽卡</a>
-      <a href="#g-admin">管理员</a>
-      <a href="#g-sys">系统</a>
-      <a href="#cheatsheet">速查表</a>
-      <a href="#connect">联系</a>
-    </nav>
-
-    <main>
-
-      <!-- ============ 互动与积分 ============ -->
-      <div class="group-head" id="g-interact">
-        <span class="bar"></span><h2>互动与积分</h2><span class="num">3</span><span class="ln"></span>
-      </div>
-
-      <!-- 赞我 -->
-      <article class="card" id="like" data-key="赞我 点赞 无前缀 喜欢 拇指 互动">
-        <div class="card-head">
-          <span class="cmd" data-copy="赞我">赞我</span>
-          <span class="tag no-prefix">无前缀</span>
-          <span class="tag">互动</span>
-        </div>
-        <p class="desc">让 bot 给你点赞。<b>不需要 <span style="font-family:var(--mono)">!</span> 前缀</b>，直接发送这两个字即可。</p>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="赞我">赞我</span>
-        </div>
-      </article>
-
-      <!-- 签到 -->
-      <article class="card" id="signin" data-key="签到 每日 积分 奖励 连签 天数 打卡 无前缀">
-        <div class="card-head">
-          <span class="cmd" data-copy="签到">签到</span>
-          <span class="tag no-prefix">无前缀</span>
-          <span class="tag points">积分</span>
-        </div>
-        <p class="desc">
-          每日签到领取积分，奖励为 <span class="formula">50 + 10n</span> 积分，
-          <b>n</b> 为连续签到天数，连签越久每天领得越多。
-          同样<b>不需要 <span style="font-family:var(--mono)">!</span> 前缀</b>。
-        </p>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="签到">签到</span>
-        </div>
-      </article>
-
-      <!-- 查询好感度 -->
-      <article class="card" id="favor" data-key="!查询好感度 好感度 数值 查询 状态 好感">
-        <div class="card-head">
-          <span class="cmd" data-copy="!查询好感度">!查询好感度</span>
-          <span class="tag game">互动</span>
-        </div>
-        <p class="desc">查询当前的<b>好感度数值</b>。</p>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!查询好感度">!查询好感度</span>
-        </div>
-      </article>
-
-      <!-- ============ 音乐 ============ -->
-      <div class="group-head" id="g-music">
-        <span class="bar"></span><h2>音乐</h2><span class="num">3</span><span class="ln"></span>
-      </div>
-
-      <!-- 接歌词 -->
-      <article class="card" id="lyrics" data-key="!接歌词 歌词 歌曲 歌名 search from 接龙 猜歌 退出 结束 quit">
-        <div class="card-head">
-          <span class="cmd" data-copy="!接歌词">!接歌词</span>
-          <span class="tag game">互动游戏</span>
-        </div>
-        <p class="desc">歌词接龙游戏指令组。<b>不带参数</b>时随机开始；也可以用下面的参数指定歌曲与起始句。游戏进行中可随时退出。</p>
-        <div class="subs">
-          <div class="sub-item">
-            <div class="sub-key">search <span class="ph">&lt;歌名&gt;</span></div>
-            <div class="sub-val">搜索歌曲并从<b>第一句</b>开始接</div>
-          </div>
-          <div class="sub-item">
-            <div class="sub-key">from <span class="ph">&lt;歌名&gt;</span> <span class="ph">&lt;歌词&gt;</span></div>
-            <div class="sub-val">从<b>指定歌词</b>开始游戏</div>
-          </div>
-          <div class="sub-item">
-            <div class="sub-key">退出接歌 / 结束接歌 / quit</div>
-            <div class="sub-val">结束当前歌词接龙，三种写法任选其一</div>
-          </div>
-        </div>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!接歌词 search 晴天">!接歌词 search 晴天</span>
-          <span class="ex" data-copy="!接歌词 from I LOVE U 我爱你">!接歌词 from I LOVE U 我爱你</span>
-          <span class="ex" data-copy="!接歌词 退出接歌">!接歌词 退出接歌</span>
-        </div>
-      </article>
-
-      <!-- 点歌 -->
-      <article class="card" id="song" data-key="!点歌 点歌 歌名 语音 转换 发送 音乐 完整">
-        <div class="card-head">
-          <span class="cmd" data-copy="!点歌 ">!点歌 <span class="ph">&lt;歌名&gt;</span></span>
-          <span class="tag voice">语音</span>
-        </div>
-        <p class="desc">将指定歌曲转换为<b>语音</b>并发送。</p>
-        <div class="subs">
-          <div class="sub-item">
-            <div class="sub-key">&lt;歌名&gt;</div>
-            <div class="sub-val">要点的歌曲名称，建议写全名以便准确匹配</div>
-          </div>
-        </div>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!点歌 起风了">!点歌 起风了</span>
-        </div>
-      </article>
-
-      <!-- 副歌 -->
-      <article class="card" id="chorus" data-key="!副歌 副歌 高潮 片段 歌名 语音 播放 部分">
-        <div class="card-head">
-          <span class="cmd" data-copy="!副歌 ">!副歌 <span class="ph">&lt;歌名&gt;</span></span>
-          <span class="tag voice">语音</span>
-          <span class="tag">片段</span>
-        </div>
-        <p class="desc">播放一首歌的<b>副歌部分</b>，只截取高潮段落，比整首更快出效果。</p>
-        <div class="subs">
-          <div class="sub-item">
-            <div class="sub-key">&lt;歌名&gt;</div>
-            <div class="sub-val">要播放副歌的歌曲名称，建议写全名以便准确匹配</div>
-          </div>
-        </div>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!副歌 起风了">!副歌 起风了</span>
-          <span class="ex" data-copy="!副歌 晴天">!副歌 晴天</span>
-        </div>
-      </article>
-
-      <!-- ============ 收藏集抽卡 ============ -->
-      <div class="group-head" id="g-collect">
-        <span class="bar"></span><h2>收藏集抽卡</h2><span class="num">6</span><span class="ln"></span>
-      </div>
-
-      <!-- 抽卡 -->
-      <article class="card" id="gacha" data-key="!抽卡 抽卡 十连 单抽 积分 结果 合并转发 隐藏">
-        <div class="card-head">
-          <span class="cmd" data-copy="!抽卡 ">!抽卡 <span class="opt">[1-10]</span></span>
-          <span class="tag points">积分</span>
-        </div>
-        <p class="desc">
-          抽卡，<b>每抽 10 积分</b>。先出一张结果图，原图打包成一条合并转发；
-          抽到<b>小隐藏 / 大隐藏</b>再单独补发动图。参数为抽数，可省略，范围 1–10。
-        </p>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!抽卡">!抽卡</span>
-          <span class="ex" data-copy="!抽卡 10">!抽卡 10</span>
-        </div>
-      </article>
-
-      <!-- 卡池 -->
-      <article class="card mini" id="pools" data-key="!卡池 奖池 列表 进度 当前池 24">
-        <div class="card-head">
-          <span class="cmd" data-copy="!卡池">!卡池</span>
-          <span class="tag">查询</span>
-        </div>
-        <p class="desc">列出 <b>24 个奖池</b>和收集进度，<b>►</b> 标出当前奖池。</p>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!卡池">!卡池</span>
-        </div>
-      </article>
-
-      <!-- 换池 -->
-      <article class="card mini" id="switchpool" data-key="!换池 切换 奖池 全部卡池 系列名 池名">
-        <div class="card-head">
-          <span class="cmd" data-copy="!换池 ">!换池 <span class="ph">&lt;序号&gt;</span></span>
-          <span class="tag">设置</span>
-        </div>
-        <p class="desc">
-          切换本群奖池。<code style="font-family:var(--mono);color:var(--accent)">!换池 全部卡池</code> 可抽全部；
-          也支持直接写<b>池名或系列名</b>。
-        </p>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!换池 3">!换池 3</span>
-          <span class="ex" data-copy="!换池 全部卡池">!换池 全部卡池</span>
-        </div>
-      </article>
-
-      <!-- 图鉴 -->
-      <article class="card mini" id="album" data-key="!图鉴 收集 图鉴 灰色 分页 36 系列">
-        <div class="card-head">
-          <span class="cmd" data-copy="!图鉴">!图鉴</span>
-          <span class="tag">查询</span>
-        </div>
-        <p class="desc">
-          按系列生成本人图鉴，未收集的卡显示为<b>灰色</b>；每页最多 <b>36 张</b>，
-          超出自动分页，多页打包成一条合并转发。
-        </p>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!图鉴">!图鉴</span>
-        </div>
-      </article>
-
-      <!-- 获取卡 -->
-      <article class="card mini" id="getcard" data-key="!获取卡 原图 卡名 已拥有 查看">
-        <div class="card-head">
-          <span class="cmd" data-copy="!获取卡 ">!获取卡 <span class="ph">&lt;卡名&gt;</span></span>
-          <span class="tag">查询</span>
-        </div>
-        <p class="desc">发送<b>已拥有</b>卡的原图。</p>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!获取卡 初音未来">!获取卡 初音未来</span>
-        </div>
-      </article>
-
-      <!-- 抽卡帮助 -->
-      <article class="card mini" id="gachahelp" data-key="!抽卡帮助 帮助 说明 抽卡">
-        <div class="card-head">
-          <span class="cmd" data-copy="!抽卡帮助">!抽卡帮助</span>
-          <span class="tag sys">帮助</span>
-        </div>
-        <p class="desc">显示收藏集抽卡的<b>帮助</b>。</p>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!抽卡帮助">!抽卡帮助</span>
-        </div>
-      </article>
-
-      <!-- ============ 管理员 ============ -->
-      <div class="group-head" id="g-admin">
-        <span class="bar"></span><h2>管理员</h2><span class="num">2</span><span class="ln"></span>
-      </div>
-
-      <!-- 发积分 -->
-      <article class="card" id="givepoints" data-key="!发积分 管理员 增减 扣除 负数 积分 @">
-        <div class="card-head">
-          <span class="cmd" data-copy="!发积分 ">!发积分 <span class="ph">&lt;数量&gt;</span> <span class="opt">[@某人]</span></span>
-          <span class="tag admin">管理员</span>
-        </div>
-        <p class="desc">
-          管理员指令：增减积分，<b>负数即扣除</b>。不写 @ 时默认为操作者自己。
-        </p>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!发积分 100">!发积分 100</span>
-          <span class="ex" data-copy="!发积分 -50 @某人">!发积分 -50 @某人</span>
-        </div>
-      </article>
-
-      <!-- 发卡 -->
-      <article class="card" id="givecard" data-key="!发卡 管理员 直接发卡 不消耗积分 数量 @ 卡名">
-        <div class="card-head">
-          <span class="cmd" data-copy="!发卡 ">!发卡 <span class="ph">&lt;卡名&gt;</span> <span class="opt">[数量]</span> <span class="opt">[@某人]</span></span>
-          <span class="tag admin">管理员</span>
-        </div>
-        <p class="desc">
-          管理员指令：直接发卡，<b>不消耗积分、不掷概率</b>。数量和 @ 均可省略。
-        </p>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!发卡 初音未来">!发卡 初音未来</span>
-          <span class="ex" data-copy="!发卡 初音未来 2 @某人">!发卡 初音未来 2 @某人</span>
-        </div>
-      </article>
-
-      <!-- ============ 系统 ============ -->
-      <div class="group-head" id="g-sys">
-        <span class="bar"></span><h2>系统</h2><span class="num">1</span><span class="ln"></span>
-      </div>
-
-      <!-- help -->
-      <article class="card" id="help" data-key="!help 帮助 帮助页 指令 说明 菜单">
-        <div class="card-head">
-          <span class="cmd" data-copy="!help">!help</span>
-          <span class="tag sys">系统</span>
-        </div>
-        <p class="desc">显示 bot 自带的<b>帮助页</b>。</p>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!help">!help</span>
-        </div>
-      </article>
-
-      <div id="empty">
-        <div class="big">🔍</div>
-        <div>没有匹配的指令，换个关键词试试</div>
-      </div>
-
-      <!-- ============ 速查表 ============ -->
-      <div class="section-title" id="cheatsheet">命令速查表</div>
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr><th style="width:44%">指令</th><th>功能</th></tr>
-          </thead>
-          <tbody>
-            <tr class="row-group"><td colspan="2">互动与积分</td></tr>
-            <tr><td><code>赞我</code></td><td>让 bot 给你点赞（无前缀）</td></tr>
-            <tr><td><code>签到</code></td><td>每日签到领 50 + 10n 积分（无前缀）</td></tr>
-            <tr><td><code>!查询好感度</code></td><td>查看当前好感度数值</td></tr>
-
-            <tr class="row-group"><td colspan="2">音乐</td></tr>
-            <tr><td><code>!接歌词</code></td><td>随机开始歌词接龙</td></tr>
-            <tr><td><code>!接歌词 search &lt;歌名&gt;</code></td><td>搜索歌曲并从第一句开始</td></tr>
-            <tr><td><code>!接歌词 from &lt;歌名&gt; &lt;歌词&gt;</code></td><td>从指定歌词开始游戏</td></tr>
-            <tr><td><code>!接歌词 退出接歌 / 结束接歌 / quit</code></td><td>结束当前歌词接龙</td></tr>
-            <tr><td><code>!点歌 &lt;歌名&gt;</code></td><td>把整首歌曲转成语音发送</td></tr>
-            <tr><td><code>!副歌 &lt;歌名&gt;</code></td><td>播放歌曲的副歌部分</td></tr>
-
-            <tr class="row-group"><td colspan="2">收藏集抽卡</td></tr>
-            <tr><td><code>!抽卡 [1-10]</code></td><td>抽卡，每抽 10 积分</td></tr>
-            <tr><td><code>!卡池</code></td><td>列出 24 个奖池与收集进度</td></tr>
-            <tr><td><code>!换池 &lt;序号&gt;</code></td><td>切换本群奖池</td></tr>
-            <tr><td><code>!图鉴</code></td><td>按系列生成本人图鉴</td></tr>
-            <tr><td><code>!获取卡 &lt;卡名&gt;</code></td><td>发送已拥有卡的原图</td></tr>
-            <tr><td><code>!抽卡帮助</code></td><td>显示抽卡帮助</td></tr>
-
-            <tr class="row-group"><td colspan="2">管理员</td></tr>
-            <tr><td><code>!发积分 &lt;数量&gt; [@某人]</code></td><td>增减积分，负数即扣除</td></tr>
-            <tr><td><code>!发卡 &lt;卡名&gt; [数量] [@某人]</code></td><td>直接发卡，不消耗积分</td></tr>
-
-            <tr class="row-group"><td colspan="2">系统</td></tr>
-            <tr><td><code>!help</code></td><td>显示帮助页</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- ============ 说明 ============ -->
-      <div class="section-title">使用说明</div>
-      <div class="notes">
-        <div class="note">
-          <strong>关于前缀</strong>
-          绝大多数指令以半角 <code>!</code> 开头。只有 <code>赞我</code> 和 <code>签到</code> 例外，<b>不带任何前缀</b>直接发送。
-        </div>
-        <div class="note">
-          <strong>关于尖括号与方括号</strong>
-          <code>&lt;必填&gt;</code> 必须替换成实际内容；<code>[可选]</code> 可以省略不写。括号本身不用发送。
-        </div>
-        <div class="note">
-          <strong>积分怎么来</strong>
-          每日 <code>签到</code> 得 <b>50 + 10n</b>（n 为连签天数）；管理员可用 <code>!发积分</code> 增减。
-        </div>
-        <div class="note">
-          <strong>积分怎么花</strong>
-          抽卡每抽 <b>10 积分</b>，<code>!抽卡 10</code> 一次消耗 100 积分。
-        </div>
-        <div class="note">
-          <strong>点歌 与 副歌 的区别</strong>
-          <code>!点歌</code> 发送整首；<code>!副歌</code> 只发送副歌片段，想快速听高潮就用副歌。
-        </div>
-        <div class="note">
-          <strong>管理员指令</strong>
-          <code>!发积分</code> 和 <code>!发卡</code> 仅管理员可用；普通用户发送会没有反应。
-        </div>
-      </div>
-
-      <!-- ============ 联系 ============ -->
-      <div class="section-title" id="connect">服务群 &amp; 网站</div>
-      <div class="connect">
-        <div class="connect-card">
-          <div class="k">QQ 服务群</div>
-          <div class="v" id="qq-num">1067790453</div>
-          <div class="t">问题反馈 · 使用交流 · 功能建议</div>
-          <button class="copy-mini" data-copy="1067790453" type="button">复制群号</button>
-        </div>
-        <a class="connect-card" href="https://azure712.space" target="_blank" rel="noopener noreferrer">
-          <div class="go">↗</div>
-          <div class="k">官方网站</div>
-          <div class="v link">azure712.space</div>
-          <div class="t">点击访问 · 文档与更新公告</div>
-        </a>
-      </div>
-
-      <footer>
-        <p><span class="k">Bot 指令手册</span> · 点击任意指令或示例即可复制</p>
-        <p style="margin-top:7px">服务群 <span class="k">1067790453</span> &nbsp;·&nbsp; 网站 <span class="k">azure712.space</span></p>
-        <p style="margin-top:7px">发送 <span class="k">!help</span> 可在聊天中直接查看帮助</p>
-      </footer>
-
-    </main>
   </div>
 </div>
 
 <div id="toast">已复制</div>
 
-<script>
+<script type="module">
+/* ---------- 搜索过滤 ---------- */
+const searchEl = document.getElementById('search');
+const cards = Array.from(document.querySelectorAll('.card'));
+const countEl = document.getElementById('count');
+const emptyEl = document.getElementById('empty');
+const heads = Array.from(document.querySelectorAll('.group-head'));
+
+function applyFilter() {
+  const q = searchEl.value.trim().toLowerCase();
+  let shown = 0;
+  cards.forEach((card) => {
+    const hay = (card.dataset.key || '') + ' ' + card.textContent;
+    const hit = !q || hay.toLowerCase().includes(q);
+    card.classList.toggle('hidden', !hit);
+    if (hit) shown++;
+  });
+  heads.forEach((head) => {
+    let el = head.nextElementSibling, any = false;
+    while (el && !el.classList.contains('group-head')) {
+      if (el.classList.contains('card') && !el.classList.contains('hidden')) { any = true; break; }
+      el = el.nextElementSibling;
+    }
+    head.style.display = any ? '' : 'none';
+  });
+  countEl.textContent = `显示 ${shown} / ${cards.length} 条指令`;
+  emptyEl.classList.toggle('visible', shown === 0);
+}
+searchEl.addEventListener('input', applyFilter);
+
+document.addEventListener('keydown', (e) => {
+  const tag = (document.activeElement && document.activeElement.tagName) || '';
+  if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+    e.preventDefault(); searchEl.focus();
+  } else if (e.key === 'Escape') {
+    searchEl.value = ''; applyFilter(); searchEl.blur();
+  }
+});
+
+/* ---------- 复制 ---------- */
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 1500);
+}
+function copyText(text) {
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    showToast('已复制：' + text);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => showToast('已复制：' + text)).catch(fallback);
+  } else fallback();
+}
+document.querySelectorAll('[data-copy]').forEach((el) => {
+  el.addEventListener('click', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    copyText(el.dataset.copy);
+  });
+});
+
+
+
+
+/* ---------- 窗口折射：shuding 的位移图归一化做法 ---------- */
 (function () {
-  var searchEl = document.getElementById('search');
-  var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
-  var countEl = document.getElementById('count');
-  var emptyEl = document.getElementById('empty');
-  var toast = document.getElementById('toast');
-  var toastTimer = null;
-  var heads = Array.prototype.slice.call(document.querySelectorAll('.group-head'));
+  const NS = 'http://www.w3.org/2000/svg';
+  const shellEl = document.querySelector('.shell');
+  if (!shellEl) return;
 
-  function filter() {
-    var q = searchEl.value.trim().toLowerCase();
-    var shown = 0;
-    cards.forEach(function (card) {
-      var hay = (card.getAttribute('data-key') || '') + ' ' + card.textContent;
-      var hit = !q || hay.toLowerCase().indexOf(q) !== -1;
-      card.classList.toggle('hidden', !hit);
-      if (hit) shown++;
-    });
-    // 分组标题：没有可见卡片时隐藏
-    heads.forEach(function (head) {
-      var el = head.nextElementSibling;
-      var any = false;
-      while (el && !el.classList.contains('group-head')) {
-        if (el.classList.contains('card') && !el.classList.contains('hidden')) { any = true; break; }
-        el = el.nextElementSibling;
+  const BAND = 46;      // 边缘影响带（px）
+  const MAXOFF = 16;    // 最大向内采样偏移（px），必须 < BAND
+
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('width', '0'); svg.setAttribute('height', '0');
+  svg.style.cssText = 'position:absolute;pointer-events:none';
+  const defs = document.createElementNS(NS, 'defs');
+  const filter = document.createElementNS(NS, 'filter');
+  filter.id = 'lgWindow';
+  filter.setAttribute('filterUnits', 'userSpaceOnUse');
+  filter.setAttribute('color-interpolation-filters', 'sRGB');
+  const feImage = document.createElementNS(NS, 'feImage');
+  feImage.setAttribute('preserveAspectRatio', 'none');
+  const disp = document.createElementNS(NS, 'feDisplacementMap');
+  disp.setAttribute('in', 'SourceGraphic');
+  disp.setAttribute('in2', 'map');
+  disp.setAttribute('xChannelSelector', 'R');
+  disp.setAttribute('yChannelSelector', 'G');
+  filter.appendChild(feImage); filter.appendChild(disp);
+  defs.appendChild(filter); svg.appendChild(defs);
+  document.body.appendChild(svg);
+
+  const cv = document.createElement('canvas');
+  const ctx = cv.getContext('2d');
+
+  function smoothstep(e0, e1, x) {
+    const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
+    return t * t * (3 - 2 * t);
+  }
+
+  function build() {
+    const rc = shellEl.getBoundingClientRect();
+    const w = Math.round(rc.width), h = Math.round(rc.height);
+    if (w < 20 || h < 20) return;
+    const r = parseFloat(getComputedStyle(shellEl).borderTopLeftRadius) || 40;
+
+    const dpi = 1;                       // 1x 足够，且省内存
+    const W = w * dpi, H = h * dpi;
+
+    /* 1) 先算出每个像素"应该采样哪里"，得到偏移场 */
+    const ox = new Float32Array(W * H);
+    const oy = new Float32Array(W * H);
+    let maxOff = 0.0001;
+    const cx = W / 2, cy = H / 2;
+    const hx = Math.max(0, W / 2 - r * dpi), hy = Math.max(0, H / 2 - r * dpi);
+
+    for (let y = 0; y < H; y++) {
+      const dy = y + 0.5 - cy;
+      const qy = Math.abs(dy) - hy;
+      for (let x = 0; x < W; x++) {
+        const dx = x + 0.5 - cx;
+        const qx = Math.abs(dx) - hx;
+        let dist, nx, ny;
+        if (qx > 0 && qy > 0) {
+          const len = Math.hypot(qx, qy) || 1e-6;
+          dist = r * dpi - len;
+          nx = (qx / len) * (dx < 0 ? -1 : 1);
+          ny = (qy / len) * (dy < 0 ? -1 : 1);
+        } else if (qx > qy) {
+          dist = hx + r * dpi - Math.abs(dx);
+          nx = dx < 0 ? -1 : 1; ny = 0;
+        } else {
+          dist = hy + r * dpi - Math.abs(dy);
+          nx = 0; ny = dy < 0 ? -1 : 1;
+        }
+        if (dist <= 0 || dist >= BAND * dpi) { continue; }
+        /* 向内采样：越靠边拉得越多 → 边缘被压缩，形成镜片感 */
+        const t = 1 - smoothstep(0, BAND * dpi, dist);
+        const push = MAXOFF * dpi * Math.pow(t, 1.25);
+        const i = y * W + x;
+        ox[i] = -nx * push;
+        oy[i] = -ny * push;
+        const m = Math.max(Math.abs(ox[i]), Math.abs(oy[i]));
+        if (m > maxOff) maxOff = m;
       }
-      head.style.display = any ? '' : 'none';
-    });
-    countEl.textContent = '显示 ' + shown + ' / ' + cards.length + ' 条指令';
-    emptyEl.classList.toggle('visible', shown === 0);
+    }
+
+    /* 2) 归一化到 0..255，位移量 = scale * (c - 0.5)，因此 scale = 2*maxOff 时精确还原 */
+    const img = ctx.createImageData(W, H);
+    const d = img.data;
+    for (let i = 0, j = 0; i < W * H; i++, j += 4) {
+      d[j]     = Math.round((ox[i] / (2 * maxOff) + 0.5) * 255);
+      d[j + 1] = Math.round((oy[i] / (2 * maxOff) + 0.5) * 255);
+      d[j + 2] = 0;
+      d[j + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+
+    feImage.setAttribute('x', '0');
+    feImage.setAttribute('y', '0');
+    feImage.setAttribute('width', String(W));
+    feImage.setAttribute('height', String(H));
+    feImage.setAttribute('href', cv.toDataURL('image/png'));
+    disp.setAttribute('scale', String(2 * maxOff));
+    filter.setAttribute('x', '0'); filter.setAttribute('y', '0');
+    filter.setAttribute('width', String(W)); filter.setAttribute('height', String(H));
   }
 
-  searchEl.addEventListener('input', filter);
-
-  document.addEventListener('keydown', function (e) {
-    var tag = (document.activeElement && document.activeElement.tagName) || '';
-    var typing = tag === 'INPUT' || tag === 'TEXTAREA';
-    if (e.key === '/' && !typing) {
-      e.preventDefault();
-      searchEl.focus();
-    } else if (e.key === 'Escape') {
-      searchEl.value = '';
-      filter();
-      searchEl.blur();
-    }
-  });
-
-  function showToast(msg) {
-    toast.textContent = msg || '已复制';
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 1500);
-  }
-
-  function copy(text) {
-    function fallback() {
-      var ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      try { document.execCommand('copy'); } catch (err) {}
-      document.body.removeChild(ta);
-      showToast('已复制：' + text);
-    }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function () {
-        showToast('已复制：' + text);
-      }).catch(fallback);
-    } else {
-      fallback();
-    }
-  }
-
-  document.querySelectorAll('[data-copy]').forEach(function (el) {
-    el.addEventListener('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      copy(el.getAttribute('data-copy'));
-    });
-  });
-
-  filter();
+  cv.width = 1; cv.height = 1;
+  build();
+  let t;
+  window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(build, 200); });
+  window.addEventListener('load', build);
 })();
+
+/* ---------- 侧栏导航 ---------- */
+const scroller = document.getElementById('scroll');
+const navLinks = Array.from(document.querySelectorAll('#nav a'));
+navLinks.forEach((a) => {
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.getElementById(a.dataset.t);
+    if (!target) return;
+    const top = target.offsetTop - 78;
+    scroller.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  });
+});
+
+let ticking = false;
+scroller.addEventListener('scroll', () => {
+  if (ticking) return;
+  ticking = true;
+  requestAnimationFrame(() => {
+    ticking = false;
+    let current = null;
+    navLinks.forEach((a) => {
+      const t = document.getElementById(a.dataset.t);
+      if (t && t.offsetTop - 120 <= scroller.scrollTop) current = a;
+    });
+    navLinks.forEach((a) => a.classList.toggle('on', a === current));
+  });
+}, { passive: true });
+
+applyFilter();
 </script>
 </body>
 </html>
