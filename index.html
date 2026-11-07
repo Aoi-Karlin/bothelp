@@ -158,6 +158,18 @@
     nav.toc a:hover{color:var(--accent);background:rgba(255,255,255,.55);border-left-color:var(--accent)}
   }
 
+  /* ================= 分组标题 ================= */
+  .group-head{display:flex;align-items:center;gap:12px;margin:42px 0 14px;scroll-margin-top:130px}
+  .group-head:first-child{margin-top:6px}
+  .group-head .bar{width:3px;height:18px;border-radius:2px;background:linear-gradient(180deg,var(--accent),var(--accent-2));flex:none}
+  .group-head h2{font-size:16.5px;font-weight:800;letter-spacing:.01em;color:var(--ink);white-space:nowrap}
+  .group-head .num{
+    font-family:var(--mono);font-size:10.5px;color:var(--ink-3);
+    background:rgba(255,255,255,.55);border:1px solid var(--line-soft);
+    border-radius:999px;padding:1px 8px;flex:none;
+  }
+  .group-head .ln{flex:1;height:1px;background:linear-gradient(90deg,rgba(120,140,180,.4),transparent)}
+
   /* ================= 卡片 ================= */
   .card{
     background:var(--glass);
@@ -197,6 +209,7 @@
   .cmd:hover{background:#fff;border-color:rgba(79,116,196,.6);box-shadow:0 8px 20px -10px rgba(79,116,196,.9)}
   .cmd:active{transform:scale(.975)}
   .cmd .ph{color:var(--ink-3);font-weight:500}
+  .cmd .opt{color:var(--accent-2);font-weight:500}
 
   .tag{
     font-size:11px;padding:3px 10px;border-radius:999px;font-weight:600;
@@ -207,9 +220,17 @@
   .tag.voice{border-color:rgba(79,116,196,.32);color:var(--accent);background:rgba(235,241,255,.78)}
   .tag.game{border-color:rgba(199,111,168,.32);color:var(--accent-2);background:rgba(255,238,248,.75)}
   .tag.sys{border-color:rgba(63,155,150,.32);color:var(--accent-3);background:rgba(232,249,247,.75)}
+  .tag.admin{border-color:rgba(199,111,168,.45);color:#a8447f;background:rgba(255,232,244,.85)}
+  .tag.points{border-color:rgba(201,138,46,.42);color:var(--warn);background:rgba(255,246,229,.8)}
 
   .desc{color:var(--ink-2);font-size:14.5px;position:relative}
   .desc b{color:var(--accent);font-weight:650}
+
+  /* 紧凑卡片（收藏集用） */
+  .card.mini{padding:21px 24px 19px}
+  .card.mini .cmd{font-size:16px;padding:5px 12px}
+  .card.mini .desc{font-size:14px}
+  .card.mini .examples{margin-top:13px}
 
   /* 子参数 */
   .subs{margin-top:16px;display:grid;gap:8px;position:relative}
@@ -240,6 +261,13 @@
   }
   .ex:hover{background:rgba(255,255,255,.82);border-left-color:var(--accent);color:var(--ink);transform:translateX(2px)}
 
+  /* 公式高亮 */
+  .formula{
+    display:inline-block;font-family:var(--mono);font-size:13px;font-weight:700;
+    color:#8a5a12;background:linear-gradient(180deg,rgba(255,241,214,.95),rgba(255,231,190,.9));
+    border:1px solid rgba(201,138,46,.35);border-radius:8px;padding:2px 9px;margin:0 2px;
+  }
+
   /* ================= 区块标题 ================= */
   .section-title{
     font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:700;
@@ -264,6 +292,7 @@
   tbody tr:hover{background:rgba(255,255,255,.45)}
   td code{font-family:var(--mono);font-size:12.8px;color:var(--accent);background:rgba(255,255,255,.7);border:1px solid rgba(79,116,196,.18);padding:2px 8px;border-radius:6px;white-space:nowrap}
   td:last-child{color:var(--ink-2)}
+  .row-group td{background:rgba(255,255,255,.34);color:var(--ink-3);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;padding:9px 18px}
 
   /* ================= 说明卡 ================= */
   .notes{display:grid;gap:10px}
@@ -361,7 +390,7 @@
     <h1>Bot 指令手册</h1>
     <p class="sub">全部可用指令一览 · 点击任意指令即可复制</p>
     <div class="meta">
-      <span>共 <b>6</b> 条指令</span>
+      <span>共 <b>15</b> 条指令</span>
       <span>前缀 <b>!</b></span>
       <span>群号 <b>1067790453</b></span>
       <span>站点 <b>azure712.space</b></span>
@@ -374,7 +403,7 @@
       <input id="search" type="text" placeholder="搜索指令、功能或参数…（按 / 聚焦）" autocomplete="off">
     </div>
     <div class="hint-row">
-      <span id="count">显示 6 / 6 条指令</span>
+      <span id="count">显示 15 / 15 条指令</span>
       <span><kbd>Esc</kbd> 清空搜索</span>
     </div>
   </div>
@@ -382,19 +411,73 @@
   <div class="layout">
     <nav class="toc">
       <p>目录</p>
-      <a href="#lyrics">接歌词</a>
-      <a href="#like">赞我</a>
-      <a href="#song">点歌</a>
-      <a href="#chorus">副歌</a>
-      <a href="#favor">好感度</a>
-      <a href="#help">帮助</a>
+      <a href="#g-interact">互动与积分</a>
+      <a href="#g-music">音乐</a>
+      <a href="#g-collect">收藏集抽卡</a>
+      <a href="#g-admin">管理员</a>
+      <a href="#g-sys">系统</a>
       <a href="#cheatsheet">速查表</a>
       <a href="#connect">联系</a>
     </nav>
 
     <main>
 
-      <!-- 1 接歌词 -->
+      <!-- ============ 互动与积分 ============ -->
+      <div class="group-head" id="g-interact">
+        <span class="bar"></span><h2>互动与积分</h2><span class="num">3</span><span class="ln"></span>
+      </div>
+
+      <!-- 赞我 -->
+      <article class="card" id="like" data-key="赞我 点赞 无前缀 喜欢 拇指 互动">
+        <div class="card-head">
+          <span class="cmd" data-copy="赞我">赞我</span>
+          <span class="tag no-prefix">无前缀</span>
+          <span class="tag">互动</span>
+        </div>
+        <p class="desc">让 bot 给你点赞。<b>不需要 <span style="font-family:var(--mono)">!</span> 前缀</b>，直接发送这两个字即可。</p>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="赞我">赞我</span>
+        </div>
+      </article>
+
+      <!-- 签到 -->
+      <article class="card" id="signin" data-key="签到 每日 积分 奖励 连签 天数 打卡 无前缀">
+        <div class="card-head">
+          <span class="cmd" data-copy="签到">签到</span>
+          <span class="tag no-prefix">无前缀</span>
+          <span class="tag points">积分</span>
+        </div>
+        <p class="desc">
+          每日签到领取积分，奖励为 <span class="formula">50 + 10n</span> 积分，
+          <b>n</b> 为连续签到天数，连签越久每天领得越多。
+          同样<b>不需要 <span style="font-family:var(--mono)">!</span> 前缀</b>。
+        </p>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="签到">签到</span>
+        </div>
+      </article>
+
+      <!-- 查询好感度 -->
+      <article class="card" id="favor" data-key="!查询好感度 好感度 数值 查询 状态 好感">
+        <div class="card-head">
+          <span class="cmd" data-copy="!查询好感度">!查询好感度</span>
+          <span class="tag game">互动</span>
+        </div>
+        <p class="desc">查询当前的<b>好感度数值</b>。</p>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="!查询好感度">!查询好感度</span>
+        </div>
+      </article>
+
+      <!-- ============ 音乐 ============ -->
+      <div class="group-head" id="g-music">
+        <span class="bar"></span><h2>音乐</h2><span class="num">3</span><span class="ln"></span>
+      </div>
+
+      <!-- 接歌词 -->
       <article class="card" id="lyrics" data-key="!接歌词 歌词 歌曲 歌名 search from 接龙 猜歌 退出 结束 quit">
         <div class="card-head">
           <span class="cmd" data-copy="!接歌词">!接歌词</span>
@@ -423,21 +506,7 @@
         </div>
       </article>
 
-      <!-- 2 赞我 -->
-      <article class="card" id="like" data-key="赞我 点赞 无前缀 喜欢 拇指">
-        <div class="card-head">
-          <span class="cmd" data-copy="赞我">赞我</span>
-          <span class="tag no-prefix">无前缀</span>
-          <span class="tag">互动</span>
-        </div>
-        <p class="desc">让 bot 给你点赞。<b>不需要 <span style="font-family:var(--mono)">!</span> 前缀</b>，直接发送这两个字即可。</p>
-        <div class="examples">
-          <div class="examples-label">示例</div>
-          <span class="ex" data-copy="赞我">赞我</span>
-        </div>
-      </article>
-
-      <!-- 3 点歌 -->
+      <!-- 点歌 -->
       <article class="card" id="song" data-key="!点歌 点歌 歌名 语音 转换 发送 音乐 完整">
         <div class="card-head">
           <span class="cmd" data-copy="!点歌 ">!点歌 <span class="ph">&lt;歌名&gt;</span></span>
@@ -456,7 +525,7 @@
         </div>
       </article>
 
-      <!-- 4 副歌 -->
+      <!-- 副歌 -->
       <article class="card" id="chorus" data-key="!副歌 副歌 高潮 片段 歌名 语音 播放 部分">
         <div class="card-head">
           <span class="cmd" data-copy="!副歌 ">!副歌 <span class="ph">&lt;歌名&gt;</span></span>
@@ -477,20 +546,143 @@
         </div>
       </article>
 
-      <!-- 5 好感度 -->
-      <article class="card" id="favor" data-key="!查询好感度 好感度 数值 查询 状态 好感">
+      <!-- ============ 收藏集抽卡 ============ -->
+      <div class="group-head" id="g-collect">
+        <span class="bar"></span><h2>收藏集抽卡</h2><span class="num">6</span><span class="ln"></span>
+      </div>
+
+      <!-- 抽卡 -->
+      <article class="card" id="gacha" data-key="!抽卡 抽卡 十连 单抽 积分 结果 合并转发 隐藏">
         <div class="card-head">
-          <span class="cmd" data-copy="!查询好感度">!查询好感度</span>
-          <span class="tag game">互动</span>
+          <span class="cmd" data-copy="!抽卡 ">!抽卡 <span class="opt">[1-10]</span></span>
+          <span class="tag points">积分</span>
         </div>
-        <p class="desc">查询当前的<b>好感度数值</b>。</p>
+        <p class="desc">
+          抽卡，<b>每抽 10 积分</b>。先出一张结果图，原图打包成一条合并转发；
+          抽到<b>小隐藏 / 大隐藏</b>再单独补发动图。参数为抽数，可省略，范围 1–10。
+        </p>
         <div class="examples">
           <div class="examples-label">示例</div>
-          <span class="ex" data-copy="!查询好感度">!查询好感度</span>
+          <span class="ex" data-copy="!抽卡">!抽卡</span>
+          <span class="ex" data-copy="!抽卡 10">!抽卡 10</span>
         </div>
       </article>
 
-      <!-- 6 help -->
+      <!-- 卡池 -->
+      <article class="card mini" id="pools" data-key="!卡池 奖池 列表 进度 当前池 24">
+        <div class="card-head">
+          <span class="cmd" data-copy="!卡池">!卡池</span>
+          <span class="tag">查询</span>
+        </div>
+        <p class="desc">列出 <b>24 个奖池</b>和收集进度，<b>►</b> 标出当前奖池。</p>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="!卡池">!卡池</span>
+        </div>
+      </article>
+
+      <!-- 换池 -->
+      <article class="card mini" id="switchpool" data-key="!换池 切换 奖池 全部卡池 系列名 池名">
+        <div class="card-head">
+          <span class="cmd" data-copy="!换池 ">!换池 <span class="ph">&lt;序号&gt;</span></span>
+          <span class="tag">设置</span>
+        </div>
+        <p class="desc">
+          切换本群奖池。<code style="font-family:var(--mono);color:var(--accent)">!换池 全部卡池</code> 可抽全部；
+          也支持直接写<b>池名或系列名</b>。
+        </p>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="!换池 3">!换池 3</span>
+          <span class="ex" data-copy="!换池 全部卡池">!换池 全部卡池</span>
+        </div>
+      </article>
+
+      <!-- 图鉴 -->
+      <article class="card mini" id="album" data-key="!图鉴 收集 图鉴 灰色 分页 36 系列">
+        <div class="card-head">
+          <span class="cmd" data-copy="!图鉴">!图鉴</span>
+          <span class="tag">查询</span>
+        </div>
+        <p class="desc">
+          按系列生成本人图鉴，未收集的卡显示为<b>灰色</b>；每页最多 <b>36 张</b>，
+          超出自动分页，多页打包成一条合并转发。
+        </p>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="!图鉴">!图鉴</span>
+        </div>
+      </article>
+
+      <!-- 获取卡 -->
+      <article class="card mini" id="getcard" data-key="!获取卡 原图 卡名 已拥有 查看">
+        <div class="card-head">
+          <span class="cmd" data-copy="!获取卡 ">!获取卡 <span class="ph">&lt;卡名&gt;</span></span>
+          <span class="tag">查询</span>
+        </div>
+        <p class="desc">发送<b>已拥有</b>卡的原图。</p>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="!获取卡 初音未来">!获取卡 初音未来</span>
+        </div>
+      </article>
+
+      <!-- 抽卡帮助 -->
+      <article class="card mini" id="gachahelp" data-key="!抽卡帮助 帮助 说明 抽卡">
+        <div class="card-head">
+          <span class="cmd" data-copy="!抽卡帮助">!抽卡帮助</span>
+          <span class="tag sys">帮助</span>
+        </div>
+        <p class="desc">显示收藏集抽卡的<b>帮助</b>。</p>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="!抽卡帮助">!抽卡帮助</span>
+        </div>
+      </article>
+
+      <!-- ============ 管理员 ============ -->
+      <div class="group-head" id="g-admin">
+        <span class="bar"></span><h2>管理员</h2><span class="num">2</span><span class="ln"></span>
+      </div>
+
+      <!-- 发积分 -->
+      <article class="card" id="givepoints" data-key="!发积分 管理员 增减 扣除 负数 积分 @">
+        <div class="card-head">
+          <span class="cmd" data-copy="!发积分 ">!发积分 <span class="ph">&lt;数量&gt;</span> <span class="opt">[@某人]</span></span>
+          <span class="tag admin">管理员</span>
+        </div>
+        <p class="desc">
+          管理员指令：增减积分，<b>负数即扣除</b>。不写 @ 时默认为操作者自己。
+        </p>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="!发积分 100">!发积分 100</span>
+          <span class="ex" data-copy="!发积分 -50 @某人">!发积分 -50 @某人</span>
+        </div>
+      </article>
+
+      <!-- 发卡 -->
+      <article class="card" id="givecard" data-key="!发卡 管理员 直接发卡 不消耗积分 数量 @ 卡名">
+        <div class="card-head">
+          <span class="cmd" data-copy="!发卡 ">!发卡 <span class="ph">&lt;卡名&gt;</span> <span class="opt">[数量]</span> <span class="opt">[@某人]</span></span>
+          <span class="tag admin">管理员</span>
+        </div>
+        <p class="desc">
+          管理员指令：直接发卡，<b>不消耗积分、不掷概率</b>。数量和 @ 均可省略。
+        </p>
+        <div class="examples">
+          <div class="examples-label">示例</div>
+          <span class="ex" data-copy="!发卡 初音未来">!发卡 初音未来</span>
+          <span class="ex" data-copy="!发卡 初音未来 2 @某人">!发卡 初音未来 2 @某人</span>
+        </div>
+      </article>
+
+      <!-- ============ 系统 ============ -->
+      <div class="group-head" id="g-sys">
+        <span class="bar"></span><h2>系统</h2><span class="num">1</span><span class="ln"></span>
+      </div>
+
+      <!-- help -->
       <article class="card" id="help" data-key="!help 帮助 帮助页 指令 说明 菜单">
         <div class="card-head">
           <span class="cmd" data-copy="!help">!help</span>
@@ -508,53 +700,75 @@
         <div>没有匹配的指令，换个关键词试试</div>
       </div>
 
-      <!-- 速查表 -->
+      <!-- ============ 速查表 ============ -->
       <div class="section-title" id="cheatsheet">命令速查表</div>
       <div class="table-scroll">
         <table>
           <thead>
-            <tr><th style="width:42%">指令</th><th>功能</th></tr>
+            <tr><th style="width:44%">指令</th><th>功能</th></tr>
           </thead>
           <tbody>
+            <tr class="row-group"><td colspan="2">互动与积分</td></tr>
+            <tr><td><code>赞我</code></td><td>让 bot 给你点赞（无前缀）</td></tr>
+            <tr><td><code>签到</code></td><td>每日签到领 50 + 10n 积分（无前缀）</td></tr>
+            <tr><td><code>!查询好感度</code></td><td>查看当前好感度数值</td></tr>
+
+            <tr class="row-group"><td colspan="2">音乐</td></tr>
             <tr><td><code>!接歌词</code></td><td>随机开始歌词接龙</td></tr>
             <tr><td><code>!接歌词 search &lt;歌名&gt;</code></td><td>搜索歌曲并从第一句开始</td></tr>
             <tr><td><code>!接歌词 from &lt;歌名&gt; &lt;歌词&gt;</code></td><td>从指定歌词开始游戏</td></tr>
-            <tr><td><code>退出接歌 / 结束接歌 / quit</code></td><td>结束当前歌词接龙</td></tr>
-            <tr><td><code>赞我</code></td><td>让 bot 给你点赞（无前缀）</td></tr>
+            <tr><td><code>!接歌词 退出接歌 / 结束接歌 / quit</code></td><td>结束当前歌词接龙</td></tr>
             <tr><td><code>!点歌 &lt;歌名&gt;</code></td><td>把整首歌曲转成语音发送</td></tr>
             <tr><td><code>!副歌 &lt;歌名&gt;</code></td><td>播放歌曲的副歌部分</td></tr>
-            <tr><td><code>!查询好感度</code></td><td>查看当前好感度数值</td></tr>
+
+            <tr class="row-group"><td colspan="2">收藏集抽卡</td></tr>
+            <tr><td><code>!抽卡 [1-10]</code></td><td>抽卡，每抽 10 积分</td></tr>
+            <tr><td><code>!卡池</code></td><td>列出 24 个奖池与收集进度</td></tr>
+            <tr><td><code>!换池 &lt;序号&gt;</code></td><td>切换本群奖池</td></tr>
+            <tr><td><code>!图鉴</code></td><td>按系列生成本人图鉴</td></tr>
+            <tr><td><code>!获取卡 &lt;卡名&gt;</code></td><td>发送已拥有卡的原图</td></tr>
+            <tr><td><code>!抽卡帮助</code></td><td>显示抽卡帮助</td></tr>
+
+            <tr class="row-group"><td colspan="2">管理员</td></tr>
+            <tr><td><code>!发积分 &lt;数量&gt; [@某人]</code></td><td>增减积分，负数即扣除</td></tr>
+            <tr><td><code>!发卡 &lt;卡名&gt; [数量] [@某人]</code></td><td>直接发卡，不消耗积分</td></tr>
+
+            <tr class="row-group"><td colspan="2">系统</td></tr>
             <tr><td><code>!help</code></td><td>显示帮助页</td></tr>
           </tbody>
         </table>
       </div>
 
-      <!-- 说明 -->
+      <!-- ============ 说明 ============ -->
       <div class="section-title">使用说明</div>
       <div class="notes">
         <div class="note">
           <strong>关于前缀</strong>
-          绝大多数指令需要以 <code>!</code> 开头。唯一例外是 <code>赞我</code>，<b>不带任何前缀</b>直接发送。
+          绝大多数指令以半角 <code>!</code> 开头。只有 <code>赞我</code> 和 <code>签到</code> 例外，<b>不带任何前缀</b>直接发送。
         </div>
         <div class="note">
-          <strong>关于尖括号</strong>
-          <code>&lt;歌名&gt;</code>、<code>&lt;歌词&gt;</code> 里的内容需要替换成你实际输入的内容，尖括号本身不用发送。
+          <strong>关于尖括号与方括号</strong>
+          <code>&lt;必填&gt;</code> 必须替换成实际内容；<code>[可选]</code> 可以省略不写。括号本身不用发送。
+        </div>
+        <div class="note">
+          <strong>积分怎么来</strong>
+          每日 <code>签到</code> 得 <b>50 + 10n</b>（n 为连签天数）；管理员可用 <code>!发积分</code> 增减。
+        </div>
+        <div class="note">
+          <strong>积分怎么花</strong>
+          抽卡每抽 <b>10 积分</b>，<code>!抽卡 10</code> 一次消耗 100 积分。
         </div>
         <div class="note">
           <strong>点歌 与 副歌 的区别</strong>
           <code>!点歌</code> 发送整首；<code>!副歌</code> 只发送副歌片段，想快速听高潮就用副歌。
         </div>
         <div class="note">
-          <strong>关于参数顺序</strong>
-          <code>from</code> 后面先写歌名、再写歌词，顺序不能颠倒；歌名与歌词之间用空格分隔。
-        </div>
-        <div class="note">
-          <strong>中途退出接歌</strong>
-          发送 <code>退出接歌</code>、<code>结束接歌</code> 或 <code>quit</code> 均可结束当前游戏。
+          <strong>管理员指令</strong>
+          <code>!发积分</code> 和 <code>!发卡</code> 仅管理员可用；普通用户发送会没有反应。
         </div>
       </div>
 
-      <!-- 联系 -->
+      <!-- ============ 联系 ============ -->
       <div class="section-title" id="connect">服务群 &amp; 网站</div>
       <div class="connect">
         <div class="connect-card">
@@ -591,6 +805,7 @@
   var emptyEl = document.getElementById('empty');
   var toast = document.getElementById('toast');
   var toastTimer = null;
+  var heads = Array.prototype.slice.call(document.querySelectorAll('.group-head'));
 
   function filter() {
     var q = searchEl.value.trim().toLowerCase();
@@ -600,6 +815,16 @@
       var hit = !q || hay.toLowerCase().indexOf(q) !== -1;
       card.classList.toggle('hidden', !hit);
       if (hit) shown++;
+    });
+    // 分组标题：没有可见卡片时隐藏
+    heads.forEach(function (head) {
+      var el = head.nextElementSibling;
+      var any = false;
+      while (el && !el.classList.contains('group-head')) {
+        if (el.classList.contains('card') && !el.classList.contains('hidden')) { any = true; break; }
+        el = el.nextElementSibling;
+      }
+      head.style.display = any ? '' : 'none';
     });
     countEl.textContent = '显示 ' + shown + ' / ' + cards.length + ' 条指令';
     emptyEl.classList.toggle('visible', shown === 0);
