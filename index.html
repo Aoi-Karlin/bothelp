@@ -366,6 +366,8 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
           <div class="lbl">目录</div>
           <a href="#g-interact" data-t="g-interact">互动与积分<span class="n">3</span></a>
           <a href="#g-music" data-t="g-music">音乐<span class="n">3</span></a>
+          <a href="#g-vcpedia" data-t="g-vcpedia">中V百科<span class="n">10</span></a>
+          <a href="#g-luoyiba" data-t="g-luoyiba">洛一把 · 猜曲<span class="n">9</span></a>
           <a href="#g-collect" data-t="g-collect">收藏集抽卡<span class="n">6</span></a>
           <a href="#g-sys" data-t="g-sys">系统<span class="n">1</span></a>
           <a href="#cheatsheet" data-t="cheatsheet">速查表</a>
@@ -385,7 +387,7 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
               <input id="search" type="text" placeholder="搜索指令、功能或参数…（按 / 聚焦）" autocomplete="off">
             </div>
             <div class="hint-row">
-              <span id="count">显示 13 / 13 条指令</span>
+              <span id="count">显示 32 / 32 条指令</span>
               <span><kbd>Esc</kbd> 清空搜索</span>
             </div>
           </div>
@@ -399,7 +401,7 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
               <h1>Bot 指令手册</h1>
               <p class="sub">全部可用指令一览 · 点击任意指令即可复制</p>
               <div class="meta">
-                <span>共 <b>13</b> 条指令</span>
+                <span>共 <b>32</b> 条指令</span>
                 <span>前缀 <b>!</b></span>
                 <span>群号 <b>1067790453</b></span>
                 <span>站点 <b>azure712.space</b></span>
@@ -507,6 +509,372 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
               <div class="examples-label">示例</div>
               <span class="ex" data-copy="!副歌 起风了">!副歌 起风了</span>
               <span class="ex" data-copy="!副歌 晴天">!副歌 晴天</span>
+            </div>
+          </article>
+
+
+          <!-- ============ 中V百科 · VCPedia ============ -->
+          <div class="group-head" id="g-vcpedia">
+            <span class="bar"></span><h2>中V百科 · VCPedia</h2><span class="num">10</span><span class="ln"></span>
+          </div>
+
+          <article class="card" id="vc-help" data-key="!v家 帮助 vc help 指令 总览 说明 菜单 VCPedia 中V百科">
+            <div class="card-head">
+              <span class="cmd" data-copy="!v家 帮助">!v家 帮助</span>
+              <span class="tag sys">帮助</span>
+            </div>
+            <p class="desc">
+              中文V家百科插件（VCPedia）的指令总览。指令组是 <code>v家</code>，别名 <code>vc</code>：
+              下面所有指令都可以把 <code>!v家</code> 换成 <code>!vc</code>。
+              也可以直接和天依聊天问「某首歌 / 某位 P主」的资料。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!v家 帮助">!v家 帮助</span>
+              <span class="ex" data-copy="!vc 帮助">!vc 帮助</span>
+            </div>
+          </article>
+
+          <article class="card" id="vc-song" data-key="!v家 歌曲 song 歌 歌名 查询 资料卡 演唱 P主 投稿 荣誉 播放 VCPedia">
+            <div class="card-head">
+              <span class="cmd" data-copy="!v家 歌曲 ">!v家 歌曲 <span class="ph">&lt;歌名&gt;</span></span>
+              <span class="tag">查询</span>
+            </div>
+            <p class="desc">
+              查询 VCPedia 歌曲资料卡：演唱、P主、投稿时间、殿堂/传说/神话荣誉、
+              bilibili <b>实时播放/点赞</b>与简介。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!v家 歌曲 千年食谱颂">!v家 歌曲 千年食谱颂</span>
+              <span class="ex" data-copy="!v家 歌曲 达拉崩吧">!v家 歌曲 达拉崩吧</span>
+              <span class="ex" data-copy="!vc 歌 普通DISCO">!vc 歌 普通DISCO</span>
+            </div>
+          </article>
+
+          <article class="card" id="vc-singer" data-key="!v家 歌手 singer 角色 虚拟歌手 歌姬 生日 引擎 声源 代表色 洛天依">
+            <div class="card-head">
+              <span class="cmd" data-copy="!v家 歌手 ">!v家 歌手 <span class="ph">&lt;名字&gt;</span></span>
+              <span class="tag">查询</span>
+            </div>
+            <p class="desc">
+              虚拟歌手 / 角色资料卡：所属企划、引擎、别号、生日倒计时、身高年龄、
+              发色瞳色、声源、代表色与 VCPedia 收录歌曲数。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!v家 歌手 洛天依">!v家 歌手 洛天依</span>
+              <span class="ex" data-copy="!v家 歌手 乐正绫">!v家 歌手 乐正绫</span>
+              <span class="ex" data-copy="!v家 歌手 赤羽">!v家 歌手 赤羽</span>
+            </div>
+          </article>
+
+          <article class="card" id="vc-producer" data-key="!v家 P主 producer p主 创作者 UP主 初投稿 荣誉曲 代表曲 作品 B站">
+            <div class="card-head">
+              <span class="cmd" data-copy="!v家 P主 ">!v家 P主 <span class="ph">&lt;名字&gt;</span></span>
+              <span class="tag">查询</span>
+            </div>
+            <p class="desc">
+              P主 / 创作者资料卡：B站主页、别称、生日出身、活跃年份、歌曲风格、
+              殿堂/传说/神话荣誉曲数量、代表曲与简介。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!v家 P主 ilem">!v家 P主 ilem</span>
+              <span class="ex" data-copy="!v家 P主 JUSF周存">!v家 P主 JUSF周存</span>
+              <span class="ex" data-copy="!v家 producer 纯白">!v家 producer 纯白</span>
+            </div>
+          </article>
+
+          <article class="card" id="vc-today" data-key="!v家 今日 today 寿星 生日 投稿 今日 动态">
+            <div class="card-head">
+              <span class="cmd" data-copy="!v家 今日">!v家 今日</span>
+              <span class="tag">每日</span>
+            </div>
+            <p class="desc">
+              今日 V 家动态：今天生日的虚拟歌手（含相关人士），
+              以及今天在 VCPedia 有记录的投稿曲（随机展示一部分）。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!v家 今日">!v家 今日</span>
+            </div>
+          </article>
+
+          <article class="card" id="vc-honor" data-key="!v家 荣誉 honor 殿堂 传说 神话 统计 名单 荣誉曲">
+            <div class="card-head">
+              <span class="cmd" data-copy="!v家 荣誉">!v家 荣誉 <span class="opt">[神话]</span></span>
+              <span class="tag">统计</span>
+            </div>
+            <p class="desc">
+              各引擎殿堂曲 / 传说曲 / 神话曲数量统计；加参数「神话」查看神话曲完整名单。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!v家 荣誉">!v家 荣誉</span>
+              <span class="ex" data-copy="!v家 荣誉 神话">!v家 荣誉 神话</span>
+            </div>
+          </article>
+
+          <article class="card" id="vc-assist" data-key="!v家 助攻 assist 补量 播放量 殿堂 传说 神话 实时 助攻榜">
+            <div class="card-head">
+              <span class="cmd" data-copy="!v家 助攻">!v家 助攻 <span class="opt">[殿堂/传说/神话]</span></span>
+              <span class="tag game">实时数据</span>
+            </div>
+            <p class="desc">
+              助攻榜：列出距 <b>10 万 / 100 万 / 1000 万</b> 播放还差一点的曲目，方便去补播放量。
+              每次查询都会实时刷新展示条目的播放量，后台也会自动维护候选池。
+            </p>
+            <div class="subs">
+              <div class="sub-item">
+                <div class="sub-key">殿堂 <span class="ph">（默认）</span></div>
+                <div class="sub-val">距殿堂曲（10 万播放）还差一点的曲目</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">传说</div>
+                <div class="sub-val">距传说曲（100 万播放）还差一点的曲目</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">神话</div>
+                <div class="sub-val">距神话曲（1000 万播放）还差一点的曲目</div>
+              </div>
+            </div>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!v家 助攻">!v家 助攻</span>
+              <span class="ex" data-copy="!v家 助攻 传说">!v家 助攻 传说</span>
+              <span class="ex" data-copy="!v家 助攻 神话">!v家 助攻 神话</span>
+            </div>
+          </article>
+
+          <article class="card" id="vc-weekly" data-key="!v家 周刊 weekly 中V周刊 排行榜 榜单 图片 期数 周刊">
+            <div class="card-head">
+              <span class="cmd" data-copy="!v家 周刊">!v家 周刊 <span class="opt">[期数|上期]</span></span>
+              <span class="tag game">图片</span>
+            </div>
+            <p class="desc">
+              周刊虚拟歌手中文曲排行榜，直接渲染成图片：标题/期数/发布时间、前 20 名
+              （封面、名次、曲名、播放、得分）与 SUPER HIT 区。
+            </p>
+            <div class="subs">
+              <div class="sub-item">
+                <div class="sub-key">（留空）</div>
+                <div class="sub-val">查看最新一期周刊</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key"><span class="ph">&lt;期数&gt;</span></div>
+                <div class="sub-val">指定期数，例如 <code>746</code></div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">上期</div>
+                <div class="sub-val">查看上一期</div>
+              </div>
+            </div>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!v家 周刊">!v家 周刊</span>
+              <span class="ex" data-copy="!v家 周刊 746">!v家 周刊 746</span>
+              <span class="ex" data-copy="!v家 周刊 上期">!v家 周刊 上期</span>
+            </div>
+          </article>
+
+          <article class="card" id="vc-random" data-key="!v家 随机 random 随机曲 随机歌姬 角色 推荐">
+            <div class="card-head">
+              <span class="cmd" data-copy="!v家 随机">!v家 随机 <span class="opt">[角色]</span></span>
+              <span class="tag game">随机</span>
+            </div>
+            <p class="desc">
+              按各引擎殿堂曲数量加权随机推荐一首名曲；加「角色」则随机一位虚拟歌手。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!v家 随机">!v家 随机</span>
+              <span class="ex" data-copy="!v家 随机 角色">!v家 随机 角色</span>
+            </div>
+          </article>
+
+          <article class="card" id="vc-search" data-key="!v家 搜索 search 查找 搜索 条目 VCPedia 关键词">
+            <div class="card-head">
+              <span class="cmd" data-copy="!v家 搜索 ">!v家 搜索 <span class="ph">&lt;关键词&gt;</span></span>
+              <span class="tag">查询</span>
+            </div>
+            <p class="desc">搜索 VCPedia 条目，返回匹配结果与摘要，适合不知道准确条目名时使用。</p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!v家 搜索 洛天依">!v家 搜索 洛天依</span>
+              <span class="ex" data-copy="!v家 搜索 殿堂曲">!v家 搜索 殿堂曲</span>
+            </div>
+          </article>
+
+          <!-- ============ 洛一把 · 猜曲 ============ -->
+          <div class="group-head" id="g-luoyiba">
+            <span class="bar"></span><h2>洛一把 · 中V猜曲</h2><span class="num">9</span><span class="ln"></span>
+          </div>
+
+          <article class="card" id="lyb-guess-song" data-key="!洛一把 猜曲 猜歌 guess song 歌手 声库 歌词 STAFF 图片 游戏">
+            <div class="card-head">
+              <span class="cmd" data-copy="!洛一把 猜曲">!洛一把 猜曲 <span class="opt">[曲库]</span></span>
+              <span class="tag game">猜曲游戏</span>
+            </div>
+            <p class="desc">
+              猜中文V家歌曲。开局渲染一张题目图，然后按提示逐步猜歌名：
+              演唱/声库 → 投稿时间 → STAFF → 歌词 → 字数/首字 → 前两字。
+              共 <b>6 次机会</b>，越早猜中得分越高。
+            </p>
+            <div class="subs">
+              <div class="sub-item">
+                <div class="sub-key">（留空）</div>
+                <div class="sub-val">默认从全曲库出题</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">洛天依入门曲库 / 经典曲目 / 禾念系 / …</div>
+                <div class="sub-val">指定曲库范围，也可以是歌姬名（如「洛天依」「星尘」）</div>
+              </div>
+            </div>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!洛一把 猜曲">!洛一把 猜曲</span>
+              <span class="ex" data-copy="!洛一把 猜曲 洛天依入门曲库">!洛一把 猜曲 洛天依入门曲库</span>
+            </div>
+          </article>
+
+          <article class="card" id="lyb-guess-producer" data-key="!洛一把 猜P主 猜制作人 producer 初投稿 作品数 代表曲 名P 游戏">
+            <div class="card-head">
+              <span class="cmd" data-copy="!洛一把 猜P主">!洛一把 猜P主 <span class="opt">[名P|全部]</span></span>
+              <span class="tag game">猜P主游戏</span>
+            </div>
+            <p class="desc">
+              根据提示猜 P主：身份/主要合作歌姬 → 初投稿 → 作品数/荣誉 → 代表曲 → 名字提示。
+              范围可选「名P」（44 位）或「全部」（240 位）。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!洛一把 猜P主">!洛一把 猜P主</span>
+              <span class="ex" data-copy="!洛一把 猜P主 全部">!洛一把 猜P主 全部</span>
+            </div>
+          </article>
+
+          <article class="card" id="lyb-older" data-key="!洛一把 老资历 older 资历 发布时间 谁更早 比较 游戏">
+            <div class="card-head">
+              <span class="cmd" data-copy="!洛一把 老资历">!洛一把 老资历</span>
+              <span class="tag game">限时答题</span>
+            </div>
+            <p class="desc">
+              给出两首歌，猜哪首投稿更早。连续答对后，两首歌的发布时间差会越来越小；
+              每题 +1 分，答错或跳过会重置连续答对。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!洛一把 老资历">!洛一把 老资历</span>
+              <span class="ex" data-copy="!洛一把 答 A">!洛一把 答 A</span>
+              <span class="ex" data-copy="!洛一把 答 B">!洛一把 答 B</span>
+            </div>
+          </article>
+
+          <article class="card" id="lyb-sort" data-key="!洛一把 排序 sort 大排序 发布时间 顺序 5 10 游戏">
+            <div class="card-head">
+              <span class="cmd" data-copy="!洛一把 排序">!洛一把 排序 <span class="opt">[5|10]</span></span>
+              <span class="tag game">排序游戏</span>
+            </div>
+            <p class="desc">
+              把 5 首（或 10 首）歌按投稿时间从早到晚排序，用序号回答。
+              每题 +2 分；答错会公布正确顺序。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!洛一把 排序">!洛一把 排序</span>
+              <span class="ex" data-copy="!洛一把 排序 10">!洛一把 排序 10</span>
+              <span class="ex" data-copy="!洛一把 答 3 1 5 2 4">!洛一把 答 3 1 5 2 4</span>
+            </div>
+          </article>
+
+          <article class="card" id="lyb-answer" data-key="!洛一把 答 猜 answer 跳过 skip 停止 stop 结束 控制">
+            <div class="card-head">
+              <span class="cmd" data-copy="!洛一把 答 ">!洛一把 答 <span class="ph">&lt;答案&gt;</span></span>
+              <span class="tag">答题控制</span>
+            </div>
+            <p class="desc">
+              回答当前题目；答不出可以跳过，想结束本局用停止（会显示本群积分）。
+              题目和答题结果都会渲染成图片。
+            </p>
+            <div class="subs">
+              <div class="sub-item">
+                <div class="sub-key">答 <span class="ph">&lt;答案&gt;</span></div>
+                <div class="sub-val">猜曲/猜P主填名字；老资历填 A/B；排序填序号序列</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">跳过</div>
+                <div class="sub-val">跳过本题（猜曲/猜P主会直接公布答案）</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">停止 / 结束</div>
+                <div class="sub-val">结束当前游戏并查看本群积分</div>
+              </div>
+            </div>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!洛一把 答 达拉崩吧">!洛一把 答 达拉崩吧</span>
+              <span class="ex" data-copy="!洛一把 跳过">!洛一把 跳过</span>
+              <span class="ex" data-copy="!洛一把 停止">!洛一把 停止</span>
+            </div>
+          </article>
+
+          <article class="card" id="lyb-query" data-key="!洛一把 查 查询 search 曲库 资料 歌名 P主">
+            <div class="card-head">
+              <span class="cmd" data-copy="!洛一把 查 ">!洛一把 查 <span class="ph">&lt;歌名/P主&gt;</span></span>
+              <span class="tag">查询</span>
+            </div>
+            <p class="desc">
+              查询洛一把曲库：歌曲资料（演唱/声库/投稿时间/STAFF/歌词/B站链接），
+              或 P主资料（初投稿/作品数/荣誉构成/代表曲）。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!洛一把 查 达拉崩吧">!洛一把 查 达拉崩吧</span>
+              <span class="ex" data-copy="!洛一把 查 ilem">!洛一把 查 ilem</span>
+            </div>
+          </article>
+
+          <article class="card" id="lyb-rank" data-key="!洛一把 排行 rank 积分 积分榜 本群">
+            <div class="card-head">
+              <span class="cmd" data-copy="!洛一把 排行">!洛一把 排行</span>
+              <span class="tag">积分</span>
+            </div>
+            <p class="desc">
+              查看本群洛一把积分榜。积分按群保存在内存里，插件重载后会清空。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!洛一把 排行">!洛一把 排行</span>
+            </div>
+          </article>
+
+          <article class="card" id="lyb-help" data-key="!洛一把 帮助 help 玩法 说明 曲库 菜单">
+            <div class="card-head">
+              <span class="cmd" data-copy="!洛一把 帮助">!洛一把 帮助</span>
+              <span class="tag sys">帮助</span>
+            </div>
+            <p class="desc">查看洛一把全部玩法、曲库列表与计分规则。</p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!洛一把 帮助">!洛一把 帮助</span>
+              <span class="ex" data-copy="!lyb 帮助">!lyb 帮助</span>
+            </div>
+          </article>
+
+          <article class="card" id="lyb-links" data-key="!洛一把 链接 link 关于 about 网页版 Bilibili Toy 数据来源">
+            <div class="card-head">
+              <span class="cmd" data-copy="!洛一把 链接">!洛一把 链接</span>
+              <span class="tag">入口</span>
+            </div>
+            <p class="desc">
+              获取洛一把网页版与 Bilibili Toy 入口；「关于」可以查看曲库数据来源
+              （洛一把 / VCPedia）。
+            </p>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!洛一把 链接">!洛一把 链接</span>
+              <span class="ex" data-copy="!洛一把 关于">!洛一把 关于</span>
             </div>
           </article>
 
@@ -634,6 +1002,30 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
                 <tr><td><code>!获取卡 &lt;卡名&gt;</code></td><td>发送已拥有卡的原图</td></tr>
                 <tr><td><code>!抽卡帮助</code></td><td>显示抽卡帮助</td></tr>
 
+                <tr class="row-group"><td colspan="2">中V百科 · VCPedia</td></tr>
+                <tr><td><code>!v家 歌曲 &lt;歌名&gt;</code></td><td>歌曲资料卡（演唱/P主/荣誉/实时播放）</td></tr>
+                <tr><td><code>!v家 歌手 &lt;名字&gt;</code></td><td>虚拟歌手资料卡与生日倒计时</td></tr>
+                <tr><td><code>!v家 P主 &lt;名字&gt;</code></td><td>P主资料卡（B站/荣誉曲/代表作）</td></tr>
+                <tr><td><code>!v家 今日</code></td><td>今日寿星 + 今日投稿曲</td></tr>
+                <tr><td><code>!v家 荣誉 [神话]</code></td><td>荣誉曲统计；加「神话」看名单</td></tr>
+                <tr><td><code>!v家 助攻 [殿堂|传说|神话]</code></td><td>距下一级荣誉还差一点的助攻榜</td></tr>
+                <tr><td><code>!v家 周刊 [期数|上期]</code></td><td>中V周刊榜单图片</td></tr>
+                <tr><td><code>!v家 随机 [角色]</code></td><td>随机殿堂曲 / 随机歌姬</td></tr>
+                <tr><td><code>!v家 搜索 &lt;关键词&gt;</code></td><td>搜索 VCPedia 条目</td></tr>
+                <tr><td><code>!v家 帮助</code></td><td>显示中V百科指令帮助</td></tr>
+
+                <tr class="row-group"><td colspan="2">洛一把 · 中V猜曲</td></tr>
+                <tr><td><code>!洛一把 猜曲 [曲库]</code></td><td>根据提示猜歌名（6 次机会）</td></tr>
+                <tr><td><code>!洛一把 猜P主 [名P|全部]</code></td><td>根据提示猜 P主</td></tr>
+                <tr><td><code>!洛一把 老资历</code></td><td>两首歌哪首投稿更早</td></tr>
+                <tr><td><code>!洛一把 排序 [5|10]</code></td><td>按投稿时间给歌曲排序</td></tr>
+                <tr><td><code>!洛一把 答 &lt;答案&gt;</code></td><td>回答当前题目</td></tr>
+                <tr><td><code>!洛一把 跳过</code></td><td>跳过当前题目</td></tr>
+                <tr><td><code>!洛一把 停止</code></td><td>结束当前游戏并查看积分</td></tr>
+                <tr><td><code>!洛一把 查 &lt;歌名/P主&gt;</code></td><td>查询洛一把曲库资料</td></tr>
+                <tr><td><code>!洛一把 排行</code></td><td>本群积分榜</td></tr>
+                <tr><td><code>!洛一把 帮助 / 链接</code></td><td>玩法说明 / 网页版入口</td></tr>
+
                 <tr class="row-group"><td colspan="2">系统</td></tr>
                 <tr><td><code>!help</code></td><td>显示帮助页</td></tr>
               </tbody>
@@ -666,6 +1058,18 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
             <div class="note">
               <strong>抽卡的隐藏卡</strong>
               抽到<b>小隐藏 / 大隐藏</b>时，除了结果图和原图合并转发，还会单独补发动图。
+            </div>
+            <div class="note">
+              <strong>中V百科怎么用</strong>
+              指令组 <code>v家</code>（别名 <code>vc</code>），数据来自 VCPedia 中文V家百科；
+              歌曲/歌手/P主资料实时查询，助攻榜与周刊会自动刷新或使用缓存。
+              查资料也可以直接和天依聊天，不用记指令。
+            </div>
+            <div class="note">
+              <strong>洛一把怎么玩</strong>
+              题库来自洛一把（540 首歌曲 / 240 位 P主），题目与答题结果都会<b>渲染成图片</b>；
+              猜曲/猜P主 各有 6 次机会，老资历和排序按连续答对/正确率计分。
+              暂不支持听歌识曲等需要音频的玩法。
             </div>
           </div>
 
@@ -729,6 +1133,7 @@ function applyFilter() {
   emptyEl.classList.toggle('visible', shown === 0);
 }
 searchEl.addEventListener('input', applyFilter);
+applyFilter();
 
 document.addEventListener('keydown', (e) => {
   const tag = (document.activeElement && document.activeElement.tagName) || '';
