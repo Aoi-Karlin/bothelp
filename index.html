@@ -711,20 +711,21 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
             <span class="bar"></span><h2>洛一把 · 中V猜曲</h2><span class="num">9</span><span class="ln"></span>
           </div>
 
-          <article class="card" id="lyb-guess-song" data-key="!洛一把 猜曲 猜歌 guess song 歌手 声库 歌词 STAFF 图片 游戏">
+          <article class="card" id="lyb-guess-song" data-key="!洛一把 猜曲 猜歌 guess song STAFF 发布时间 歌姬 声库 演唱会 反馈 提示 图片 游戏">
             <div class="card-head">
               <span class="cmd" data-copy="!洛一把 猜曲">!洛一把 猜曲 <span class="opt">[曲库]</span></span>
-              <span class="tag game">猜曲游戏</span>
+              <span class="tag game">曲目猜猜看</span>
             </div>
             <p class="desc">
-              猜中文V家歌曲。开局渲染一张题目图，然后按提示逐步猜歌名：
-              演唱/声库 → 投稿时间 → STAFF → 歌词 → 字数/首字 → 前两字。
-              共 <b>6 次机会</b>，越早猜中得分越高。
+              和网页版一致：提交歌名猜测，返回一张反馈表，逐项对比
+              <b>STAFF / 发布时间 / 演唱歌姬 / 使用声库 / 演唱会次数 / 特殊标注</b>。
+              绿色=完全匹配、黄色=接近、青色=部分重合，↑↓ 表示答案更晚/更早/更多/更少。
+              <b>不限猜测次数</b>，另有 3 次提示（歌姬+时间 → STAFF → 歌词），全线索撞上会自动揭示歌词。
             </p>
             <div class="subs">
               <div class="sub-item">
                 <div class="sub-key">（留空）</div>
-                <div class="sub-val">默认从全曲库出题</div>
+                <div class="sub-val">默认从全曲库出题（540 首）</div>
               </div>
               <div class="sub-item">
                 <div class="sub-key">洛天依入门曲库 / 经典曲目 / 禾念系 / …</div>
@@ -735,98 +736,126 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
               <div class="examples-label">示例</div>
               <span class="ex" data-copy="!洛一把 猜曲">!洛一把 猜曲</span>
               <span class="ex" data-copy="!洛一把 猜曲 洛天依入门曲库">!洛一把 猜曲 洛天依入门曲库</span>
+              <span class="ex" data-copy="!洛一把 猜 达拉崩吧">!洛一把 猜 达拉崩吧</span>
             </div>
           </article>
 
-          <article class="card" id="lyb-guess-producer" data-key="!洛一把 猜P主 猜制作人 producer 初投稿 作品数 代表曲 名P 游戏">
+          <article class="card" id="lyb-guess-producer" data-key="!洛一把 猜P主 猜制作人 producer 初投稿 出道曲 殿堂 传说 神话 代表曲 名P 游戏">
             <div class="card-head">
               <span class="cmd" data-copy="!洛一把 猜P主">!洛一把 猜P主 <span class="opt">[名P|全部]</span></span>
-              <span class="tag game">猜P主游戏</span>
+              <span class="tag game">闪耀的 Producer</span>
             </div>
             <p class="desc">
-              根据提示猜 P主：身份/主要合作歌姬 → 初投稿 → 作品数/荣誉 → 代表曲 → 名字提示。
-              范围可选「名P」（44 位）或「全部」（240 位）。
+              猜 P主 名字，反馈表对比 <b>初投稿年份 / 出道曲 / 殿堂及以上 / 传说 / 神话数量 / 代表曲重合</b>。
+              初投稿年份撞上会额外揭示答案的年份与出道曲；同样不限次数、3 次提示。
+              范围可选「名P」（45 位）或「全部」（104 位）。
             </p>
             <div class="examples">
               <div class="examples-label">示例</div>
               <span class="ex" data-copy="!洛一把 猜P主">!洛一把 猜P主</span>
               <span class="ex" data-copy="!洛一把 猜P主 全部">!洛一把 猜P主 全部</span>
+              <span class="ex" data-copy="!洛一把 猜 ilem">!洛一把 猜 ilem</span>
             </div>
           </article>
 
-          <article class="card" id="lyb-older" data-key="!洛一把 老资历 older 资历 发布时间 谁更早 比较 游戏">
+          <article class="card" id="lyb-older" data-key="!洛一把 老资历 小资历 older newer 资历 发布时间 谁更早 谁更新 3 条命 游戏">
             <div class="card-head">
               <span class="cmd" data-copy="!洛一把 老资历">!洛一把 老资历</span>
-              <span class="tag game">限时答题</span>
+              <span class="tag game">谁是老资历</span>
             </div>
             <p class="desc">
-              给出两首歌，猜哪首投稿更早。连续答对后，两首歌的发布时间差会越来越小；
-              每题 +1 分，答错或跳过会重置连续答对。
+              给出两首歌，猜哪首发布时间更早；<b>3 条命</b>，答错扣 1 条命，答对 +1 分。
+              分数越高年份差越小：跨年入门 → 年代进阶 → 相邻年份 → 同年较量。
+              「小资历」则反过来猜哪首发布时间更新。
             </p>
+            <div class="subs">
+              <div class="sub-item">
+                <div class="sub-key">老资历</div>
+                <div class="sub-val">猜哪首投稿更早，答 A 或 B</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">小资历</div>
+                <div class="sub-val">猜哪首投稿更新/更晚，同样是 3 条命</div>
+              </div>
+            </div>
             <div class="examples">
               <div class="examples-label">示例</div>
               <span class="ex" data-copy="!洛一把 老资历">!洛一把 老资历</span>
+              <span class="ex" data-copy="!洛一把 小资历">!洛一把 小资历</span>
               <span class="ex" data-copy="!洛一把 答 A">!洛一把 答 A</span>
-              <span class="ex" data-copy="!洛一把 答 B">!洛一把 答 B</span>
             </div>
           </article>
 
-          <article class="card" id="lyb-sort" data-key="!洛一把 排序 sort 大排序 发布时间 顺序 5 10 游戏">
+          <article class="card" id="lyb-sort" data-key="!洛一把 排序 年份排序 sort 大排序 时间线 年份归位 发布时间 顺序 5 10 游戏">
             <div class="card-head">
               <span class="cmd" data-copy="!洛一把 排序">!洛一把 排序 <span class="opt">[5|10]</span></span>
-              <span class="tag game">排序游戏</span>
+              <span class="tag game">歌曲大排序</span>
             </div>
             <p class="desc">
-              把 5 首（或 10 首）歌按投稿时间从早到晚排序，用序号回答。
-              每题 +2 分；答错会公布正确顺序。
+              <b>时间线排序</b>：把 5/10 首歌按发布时间从早到晚排列，用序号回答；
+              按两两相对顺序正确率计分（例如 8/10 对 = 80%）。
+              <b>年份归位</b>：为每首歌填上正确的发布年份，按填对数量计分。
             </p>
+            <div class="subs">
+              <div class="sub-item">
+                <div class="sub-key">排序 [5|10]</div>
+                <div class="sub-val">时间线排序，例如答「3 1 5 2 4」</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">年份排序 [5|10]</div>
+                <div class="sub-val">年份归位，例如答「2012 2014 2015 2017 2019」</div>
+              </div>
+            </div>
             <div class="examples">
               <div class="examples-label">示例</div>
               <span class="ex" data-copy="!洛一把 排序">!洛一把 排序</span>
               <span class="ex" data-copy="!洛一把 排序 10">!洛一把 排序 10</span>
-              <span class="ex" data-copy="!洛一把 答 3 1 5 2 4">!洛一把 答 3 1 5 2 4</span>
+              <span class="ex" data-copy="!洛一把 年份排序">!洛一把 年份排序</span>
             </div>
           </article>
 
-          <article class="card" id="lyb-answer" data-key="!洛一把 答 猜 answer 跳过 skip 停止 stop 结束 控制">
+          <article class="card" id="lyb-answer" data-key="!洛一把 答 猜 answer 提示 hint 投降 surrender 跳过 skip 停止 stop 结束 控制">
             <div class="card-head">
               <span class="cmd" data-copy="!洛一把 答 ">!洛一把 答 <span class="ph">&lt;答案&gt;</span></span>
-              <span class="tag">答题控制</span>
+              <span class="tag">答题 / 控制</span>
             </div>
             <p class="desc">
-              回答当前题目；答不出可以跳过，想结束本局用停止（会显示本群积分）。
-              题目和答题结果都会渲染成图片。
+              回答当前题目；答不出可以用提示，想结束可以投降/停止。所有题目、反馈表和结算都会渲染成图片。
             </p>
             <div class="subs">
               <div class="sub-item">
-                <div class="sub-key">答 <span class="ph">&lt;答案&gt;</span></div>
-                <div class="sub-val">猜曲/猜P主填名字；老资历填 A/B；排序填序号序列</div>
+                <div class="sub-key">猜 / 答 <span class="ph">&lt;答案&gt;</span></div>
+                <div class="sub-val">猜曲/猜P主填名字；老资历填 A/B；排序填序号序列或年份</div>
               </div>
               <div class="sub-item">
-                <div class="sub-key">跳过</div>
-                <div class="sub-val">跳过本题（猜曲/猜P主会直接公布答案）</div>
+                <div class="sub-key">提示</div>
+                <div class="sub-val">竞猜类共 3 次提示（歌姬+时间 → STAFF → 歌词 / P主同理）</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">投降 / 跳过</div>
+                <div class="sub-val">公布答案并结束当前对局</div>
               </div>
               <div class="sub-item">
                 <div class="sub-key">停止 / 结束</div>
-                <div class="sub-val">结束当前游戏并查看本群积分</div>
+                <div class="sub-val">结束当前对局（老资历会显示最终得分与评价）</div>
               </div>
             </div>
             <div class="examples">
               <div class="examples-label">示例</div>
-              <span class="ex" data-copy="!洛一把 答 达拉崩吧">!洛一把 答 达拉崩吧</span>
-              <span class="ex" data-copy="!洛一把 跳过">!洛一把 跳过</span>
-              <span class="ex" data-copy="!洛一把 停止">!洛一把 停止</span>
+              <span class="ex" data-copy="!洛一把 猜 达拉崩吧">!洛一把 猜 达拉崩吧</span>
+              <span class="ex" data-copy="!洛一把 提示">!洛一把 提示</span>
+              <span class="ex" data-copy="!洛一把 投降">!洛一把 投降</span>
             </div>
           </article>
 
-          <article class="card" id="lyb-query" data-key="!洛一把 查 查询 search 曲库 资料 歌名 P主">
+          <article class="card" id="lyb-query" data-key="!洛一把 查 查询 search 曲库 资料 歌名 P主 初投稿 代表曲">
             <div class="card-head">
               <span class="cmd" data-copy="!洛一把 查 ">!洛一把 查 <span class="ph">&lt;歌名/P主&gt;</span></span>
               <span class="tag">查询</span>
             </div>
             <p class="desc">
-              查询洛一把曲库：歌曲资料（演唱/声库/投稿时间/STAFF/歌词/B站链接），
-              或 P主资料（初投稿/作品数/荣誉构成/代表曲）。
+              查询洛一把曲库：歌曲资料（演唱/声库/发布时间/STAFF/歌词/B站链接），
+              或 P主资料（初投稿/出道曲/殿堂及以上·传说·神话数量/代表曲）。
             </p>
             <div class="examples">
               <div class="examples-label">示例</div>
@@ -835,13 +864,14 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
             </div>
           </article>
 
-          <article class="card" id="lyb-rank" data-key="!洛一把 排行 rank 积分 积分榜 本群">
+          <article class="card" id="lyb-rank" data-key="!洛一把 排行 rank 成绩 记录 本群">
             <div class="card-head">
               <span class="cmd" data-copy="!洛一把 排行">!洛一把 排行</span>
-              <span class="tag">积分</span>
+              <span class="tag">记录</span>
             </div>
             <p class="desc">
-              查看本群洛一把积分榜。积分按群保存在内存里，插件重载后会清空。
+              查看本群洛一把成绩记录：猜曲/猜P主 的最少猜中次数、老资历最高分、排序最高正确率。
+              记录保存在内存里，插件重载后会清空。
             </p>
             <div class="examples">
               <div class="examples-label">示例</div>
@@ -1015,16 +1045,17 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
                 <tr><td><code>!v家 帮助</code></td><td>显示中V百科指令帮助</td></tr>
 
                 <tr class="row-group"><td colspan="2">洛一把 · 中V猜曲</td></tr>
-                <tr><td><code>!洛一把 猜曲 [曲库]</code></td><td>根据提示猜歌名（6 次机会）</td></tr>
-                <tr><td><code>!洛一把 猜P主 [名P|全部]</code></td><td>根据提示猜 P主</td></tr>
-                <tr><td><code>!洛一把 老资历</code></td><td>两首歌哪首投稿更早</td></tr>
-                <tr><td><code>!洛一把 排序 [5|10]</code></td><td>按投稿时间给歌曲排序</td></tr>
-                <tr><td><code>!洛一把 答 &lt;答案&gt;</code></td><td>回答当前题目</td></tr>
-                <tr><td><code>!洛一把 跳过</code></td><td>跳过当前题目</td></tr>
-                <tr><td><code>!洛一把 停止</code></td><td>结束当前游戏并查看积分</td></tr>
+                <tr><td><code>!洛一把 猜曲 [曲库]</code></td><td>曲目猜猜看：反馈表逐项对比，3 次提示，不限次数</td></tr>
+                <tr><td><code>!洛一把 猜P主 [名P|全部]</code></td><td>闪耀的 Producer：反馈初投稿/出道曲/荣誉/代表曲</td></tr>
+                <tr><td><code>!洛一把 老资历</code></td><td>两首歌哪首发布时间更早（3 条命）</td></tr>
+                <tr><td><code>!洛一把 小资历</code></td><td>两首歌哪首发布时间更新（3 条命）</td></tr>
+                <tr><td><code>!洛一把 排序 [5|10]</code></td><td>时间线排序，按相对顺序正确率计分</td></tr>
+                <tr><td><code>!洛一把 年份排序 [5|10]</code></td><td>把歌曲放回正确的发布年份</td></tr>
+                <tr><td><code>!洛一把 猜 &lt;答案&gt;</code></td><td>提交当前猜测（歌名/P主/A或B/序号或年份）</td></tr>
+                <tr><td><code>!洛一把 提示</code></td><td>使用提示（竞猜类共 3 次）</td></tr>
+                <tr><td><code>!洛一把 投降 / 停止</code></td><td>公布答案或结束当前对局</td></tr>
                 <tr><td><code>!洛一把 查 &lt;歌名/P主&gt;</code></td><td>查询洛一把曲库资料</td></tr>
-                <tr><td><code>!洛一把 排行</code></td><td>本群积分榜</td></tr>
-                <tr><td><code>!洛一把 帮助 / 链接</code></td><td>玩法说明 / 网页版入口</td></tr>
+                <tr><td><code>!洛一把 排行 / 帮助 / 链接</code></td><td>本群成绩记录 / 帮助 / 网页版入口</td></tr>
 
                 <tr class="row-group"><td colspan="2">系统</td></tr>
                 <tr><td><code>!help</code></td><td>显示帮助页</td></tr>
@@ -1067,9 +1098,10 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
             </div>
             <div class="note">
               <strong>洛一把怎么玩</strong>
-              题库来自洛一把（540 首歌曲 / 240 位 P主），题目与答题结果都会<b>渲染成图片</b>；
-              猜曲/猜P主 各有 6 次机会，老资历和排序按连续答对/正确率计分。
-              暂不支持听歌识曲等需要音频的玩法。
+              题库来自洛一把（540 首歌曲 / 104 位 P主），规则与网页版一致：
+              猜曲/猜P主 看反馈表推理、各有 3 次提示且不限猜测次数；老资历/小资历 3 条命；
+              排序按相对顺序正确率计分、年份排序按填对数量计分。题目/反馈/结果都会<b>渲染成图片</b>。
+              听歌识曲、曲名填字、多人联机与曲目喜好表暂未包含。
             </div>
           </div>
 
