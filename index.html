@@ -367,7 +367,7 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
           <a href="#g-interact" data-t="g-interact">互动与积分<span class="n">3</span></a>
           <a href="#g-music" data-t="g-music">音乐<span class="n">3</span></a>
           <a href="#g-vcpedia" data-t="g-vcpedia">中V百科<span class="n">10</span></a>
-          <a href="#g-luoyiba" data-t="g-luoyiba">洛一把 · 猜曲<span class="n">9</span></a>
+          <a href="#g-luoyiba" data-t="g-luoyiba">洛一把 · 猜曲<span class="n">10</span></a>
           <a href="#g-collect" data-t="g-collect">收藏集抽卡<span class="n">6</span></a>
           <a href="#g-sys" data-t="g-sys">系统<span class="n">1</span></a>
           <a href="#cheatsheet" data-t="cheatsheet">速查表</a>
@@ -387,7 +387,7 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
               <input id="search" type="text" placeholder="搜索指令、功能或参数…（按 / 聚焦）" autocomplete="off">
             </div>
             <div class="hint-row">
-              <span id="count">显示 32 / 32 条指令</span>
+              <span id="count">显示 33 / 33 条指令</span>
               <span><kbd>Esc</kbd> 清空搜索</span>
             </div>
           </div>
@@ -401,7 +401,7 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
               <h1>Bot 指令手册</h1>
               <p class="sub">全部可用指令一览 · 点击任意指令即可复制</p>
               <div class="meta">
-                <span>共 <b>32</b> 条指令</span>
+                <span>共 <b>33</b> 条指令</span>
                 <span>前缀 <b>!</b></span>
                 <span>群号 <b>1067790453</b></span>
                 <span>站点 <b>azure712.space</b></span>
@@ -708,7 +708,7 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
 
           <!-- ============ 洛一把 · 猜曲 ============ -->
           <div class="group-head" id="g-luoyiba">
-            <span class="bar"></span><h2>洛一把 · 中V猜曲</h2><span class="num">9</span><span class="ln"></span>
+            <span class="bar"></span><h2>洛一把 · 中V猜曲</h2><span class="num">10</span><span class="ln"></span>
           </div>
 
           <article class="card" id="lyb-guess-song" data-key="!洛一把 猜曲 猜歌 guess song STAFF 发布时间 歌姬 声库 演唱会 反馈 提示 图片 游戏">
@@ -721,7 +721,7 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
               <b>STAFF / 发布时间 / 演唱歌姬 / 使用声库 / 演唱会次数 / 特殊标注</b>。
               绿色=完全匹配、黄色=接近、青色=部分重合，↑↓ 表示答案更晚/更早/更多/更少。
               <b>不限猜测次数</b>，另有 3 次提示（歌姬+时间 → STAFF → 歌词），全线索撞上会自动揭示歌词。
-              开局后<b>直接发歌名就能猜，不需要指令</b>。
+              开局后<b>直接发歌名就能猜，不需要指令</b>（默认只有开局者能答；全群一起玩用「群答」）。
             </p>
             <div class="subs">
               <div class="sub-item">
@@ -756,6 +756,42 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
               <span class="ex" data-copy="!洛一把 猜P主">!洛一把 猜P主</span>
               <span class="ex" data-copy="!洛一把 猜P主 全部">!洛一把 猜P主 全部</span>
               <span class="ex" data-copy="!洛一把 猜 ilem">!洛一把 猜 ilem</span>
+            </div>
+          </article>
+
+          <article class="card" id="lyb-group" data-key="!洛一把 群答 group 多人 公开 全群 一起玩 群答模式 所有人">
+            <div class="card-head">
+              <span class="cmd" data-copy="!洛一把 群答 ">!洛一把 群答 <span class="ph">&lt;玩法&gt;</span> <span class="opt">[参数]</span></span>
+              <span class="tag game">群答模式</span>
+            </div>
+            <p class="desc">
+              全群一起玩：和单人玩法规则一样，但<b>所有人都能作答</b>，也都能发「提示 / 投降 / 停止」。
+              默认单人局只有开局者能答；想让群友一起参与就用这个子命令开局。
+            </p>
+            <div class="subs">
+              <div class="sub-item">
+                <div class="sub-key">群答 猜曲 [曲库]</div>
+                <div class="sub-val">全群一起猜曲目</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">群答 猜P主 [名P|全部]</div>
+                <div class="sub-val">全群一起猜 P主</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">群答 老资历 / 群答 小资历</div>
+                <div class="sub-val">全群一起猜哪首更早/更新</div>
+              </div>
+              <div class="sub-item">
+                <div class="sub-key">群答 排序 [5|10] / 群答 年份排序 [5|10]</div>
+                <div class="sub-val">全群一起排序/归位</div>
+              </div>
+            </div>
+            <div class="examples">
+              <div class="examples-label">示例</div>
+              <span class="ex" data-copy="!洛一把 群答 猜曲">!洛一把 群答 猜曲</span>
+              <span class="ex" data-copy="!洛一把 群答 猜P主">!洛一把 群答 猜P主</span>
+              <span class="ex" data-copy="!洛一把 群答 老资历">!洛一把 群答 老资历</span>
+              <span class="ex" data-copy="!洛一把 群答 排序 10">!洛一把 群答 排序 10</span>
             </div>
           </article>
 
@@ -822,7 +858,7 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
             </div>
             <p class="desc">
               回答当前题目；答不出可以用提示，想结束可以投降/停止。所有题目、反馈表和结算都会渲染成图片。
-              <b>对局进行中直接发消息即可作答（不用指令）；对局结束后恢复正常 AI 对话。</b>
+              <b>对局进行中直接发消息即可作答（不用指令）；默认只有开局者能答，全群一起玩请用「群答」开局。对局结束后恢复正常 AI 对话。</b>
             </p>
             <div class="subs">
               <div class="sub-item">
@@ -1049,6 +1085,7 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
                 <tr class="row-group"><td colspan="2">洛一把 · 中V猜曲</td></tr>
                 <tr><td><code>!洛一把 猜曲 [曲库]</code></td><td>曲目猜猜看：反馈表逐项对比，3 次提示，不限次数</td></tr>
                 <tr><td><code>!洛一把 猜P主 [名P|全部]</code></td><td>闪耀的 Producer：反馈初投稿/出道曲/荣誉/代表曲</td></tr>
+                <tr><td><code>!洛一把 群答 &lt;玩法&gt;</code></td><td>群答模式：全群一起玩，所有人都能作答</td></tr>
                 <tr><td><code>!洛一把 老资历</code></td><td>两首歌哪首发布时间更早（3 条命）</td></tr>
                 <tr><td><code>!洛一把 小资历</code></td><td>两首歌哪首发布时间更新（3 条命）</td></tr>
                 <tr><td><code>!洛一把 排序 [5|10]</code></td><td>时间线排序，按相对顺序正确率计分</td></tr>
@@ -1104,6 +1141,7 @@ footer .k{color:var(--ink-2);font-family:var(--mono);font-size:11px}
               猜曲/猜P主 看反馈表推理、各有 3 次提示且不限猜测次数；老资历/小资历 3 条命；
               排序按相对顺序正确率计分、年份排序按填对数量计分。题目/反馈/结果都会<b>渲染成图片</b>。
               对局开始后直接发消息（歌名 / P主 / A、B / 序号）就能答题，不用指令；
+              默认只有开局者能答，想全群一起玩用「群答」子命令开局；
               发「提示」「投降」「停止」也有效；对局结束后恢复正常 AI 对话。
               听歌识曲、曲名填字、多人联机与曲目喜好表暂未包含。
             </div>
